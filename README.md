@@ -2,6 +2,8 @@
 
 Launch videos and release assets for [chmonitor](https://chmonitor.dev), versioned by release.
 
+<video src="v0.3/chmonitor-v03-design-launch.mp4" controls width="100%"></video>
+
 Each release gets its own folder containing the finished video(s) and the full
 source needed to re-render or edit them.
 
