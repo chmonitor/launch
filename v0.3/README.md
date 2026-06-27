@@ -9,9 +9,9 @@ A faithful render of the "chmonitor v0.3 Launch" Claude Design film
 ## Scenes
 
 1. **Intro** — logo + `v0.3`, "A full rebuild — here's what landed" (8 features · 70+ fixes · 13 perf wins · 3 breaking)
-2. **The Dashboard** — Rebuilt on TanStack Start *(live screen recording: overview → insights)*
+2. **The Dashboard** — Rebuilt on TanStack Start *(live screen recording)*
 3. **AI Agent** — Ask your cluster anything (over MCP)
-4. **Query Monitoring** — Watch every query, live
+4. **Query Monitoring** — Watch every query, live *(live screen recording)*
 5. **Data Query Explorer** — SQL console → dependency graph
 6. **Topology & Health** — cluster topology → health summary
 7. **And a lot more** — 15+ pages, 71 charts (montage)

@@ -1935,7 +1935,7 @@ function Video({ orientation }) {
               lt={lt}
               L={L}
               url="dash.chmonitor.dev/overview"
-              src="clips/overview-insights.mp4"
+              src="clips/overview.mp4"
               trim={0}
               speed={1}
             />
@@ -1983,11 +1983,13 @@ function Video({ orientation }) {
                 { text: 'Per-user', color: GREEN },
               ]}
             />
-            <Frame
+            <VideoFrame
               lt={lt}
               L={L}
               url="dash.chmonitor.dev/queries/running"
-              src={R('queriesRunning', 'shots/queries-running.png')}
+              src="clips/queries.mp4"
+              trim={0}
+              speed={1}
             />
           </>
         )}
