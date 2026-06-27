@@ -1,0 +1,4 @@
+node_modules/
+frames/
+renders/work-*/
+.DS_Store
