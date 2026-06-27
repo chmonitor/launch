@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>chmonitor — launch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #09090b; color: #fafafa; font-family: 'Inter', system-ui, sans-serif; }
+  body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 24px; }
+
+  .logo { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+  .logo-text { font-size: 32px; font-weight: 700; letter-spacing: -0.03em; }
+  .badge { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #f97316; letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 48px; }
+
+  .releases { width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 16px; }
+
+  .card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 16px;
+    padding: 28px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 120ms, border-color 120ms;
+  }
+  .card:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.18); }
+
+  .card-info {}
+  .card-version {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #f97316;
+    margin-bottom: 8px;
+  }
+  .card-title { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .card-desc { font-size: 14px; color: rgba(250,250,250,0.55); line-height: 1.5; }
+
+  .card-actions { display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px; border-radius: 9px; font-size: 14px; font-weight: 500;
+    text-decoration: none; white-space: nowrap; transition: opacity 120ms;
+  }
+  .btn:hover { opacity: 0.85; }
+  .btn-primary { background: #f97316; color: #fff; }
+  .btn-ghost {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.10);
+    color: rgba(250,250,250,0.75);
+  }
+
+  footer { margin-top: 56px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: rgba(250,250,250,0.3); letter-spacing: 0.04em; }
+  footer a { color: inherit; text-decoration: none; }
+  footer a:hover { color: rgba(250,250,250,0.6); }
+</style>
+</head>
+<body>
+  <div class="logo">
+    <svg width="40" height="40" viewBox="0 0 44 44">
+      <rect x="9.3" y="19.05" width="3.8" height="15.45" rx="0.7" fill="#f97316"/>
+      <rect x="14.7" y="9.5"  width="3.8" height="25"    rx="0.7" fill="#f97316"/>
+      <rect x="20.1" y="19.25" width="3.8" height="15.25" rx="0.7" fill="#f97316"/>
+      <rect x="25.5" y="12.25" width="3.8" height="22.25" rx="0.7" fill="#f97316"/>
+      <rect x="30.9" y="22.8"  width="3.8" height="11.7"  rx="0.7" fill="#f97316"/>
+      <rect x="9.3"  y="15.75" width="3.8" height="3.3"   rx="0.7" fill="#10b981"/>
+    </svg>
+    <span class="logo-text">chmonitor</span>
+  </div>
+  <div class="badge">launch films</div>
+
+  <div class="releases">
+    <div class="card">
+      <div class="card-info">
+        <div class="card-version">v0.3</div>
+        <div class="card-title">Full rebuild launch film</div>
+        <div class="card-desc">
+          TanStack Start dashboard · AI agent · query monitoring · data explorer ·
+          topology · health &amp; audit · self-host anywhere. ~28s · 13 scenes.
+        </div>
+      </div>
+      <div class="card-actions">
+        <a class="btn btn-primary" href="v0.3/src/">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M3 2l9 5-9 5V2z" fill="currentColor"/>
+          </svg>
+          Live player
+        </a>
+        <a class="btn btn-ghost" download href="v0.3/chmonitor-v03-design-launch.mp4">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M7 2v7M4 7l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Download MP4
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <a href="https://chmonitor.dev">chmonitor.dev</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/chmonitor/launch">github.com/chmonitor/launch</a>
+  </footer>
+</body>
+</html>
