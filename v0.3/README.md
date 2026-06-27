@@ -1,22 +1,25 @@
 # chmonitor v0.3 — launch film
 
-`chmonitor-v03-design-launch.mp4` — 20s · 1920×1080 · H.264 + AAC.
-Optimized for X and LinkedIn.
+`chmonitor-v03-design-launch.mp4` — ~28s · 1920×1080 · H.264 + AAC.
 
 A faithful render of the "chmonitor v0.3 Launch" Claude Design film
 (claude.ai/design project *CHM v0.3 Release*).
 
-## Scenes
+## Scenes (13)
 
-1. **Intro** — logo + `v0.3`, "A full rebuild — here's what landed" (8 features · 70+ fixes · 13 perf wins · 3 breaking)
-2. **The Dashboard** — Rebuilt on TanStack Start *(live screen recording)*
-3. **AI Agent** — Ask your cluster anything (over MCP)
-4. **Query Monitoring** — Watch every query, live *(live screen recording)*
-5. **Data Query Explorer** — dependency graph → SQL console *(live screen recording)*
-6. **Topology & Health** — cluster topology → health summary
-7. **And a lot more** — 15+ pages, 71 charts (montage)
-8. **Self-host anywhere** — Cloudflare Workers / Docker / Kubernetes
-9. **End card** — chmonitor.dev
+1.  **Intro** — logo + `v0.3`, "A full rebuild — here's what landed" (8 features · 70+ fixes · 13 perf wins · 3 breaking)
+2.  **The Dashboard** — Rebuilt on TanStack Start *(live screen recording)*
+3.  **AI Agent** — Ask your cluster anything (over MCP)
+4.  **Query Monitoring** — Watch every query, live *(live screen recording)*
+5.  **Data Query Explorer** — dependency graph → SQL console *(live screen recording)*
+6.  **AI Insights** — anomalies & regressions, ranked by severity
+7.  **Metrics & Profiler** — CPU / memory / IO + ClickHouse profiler events
+8.  **Query EXPLAIN** — the EXPLAIN plan as a tree
+9.  **Cluster Topology** — nodes, shards, replicas, Keeper quorum
+10. **Health & Audit** — color-coded health → ready-made audit prompt
+11. **And a lot more** — 15+ pages, 71 charts (montage)
+12. **Self-host anywhere** — Cloudflare Workers / Docker / Kubernetes
+13. **End card** — chmonitor.dev
 
 ## Re-rendering
 
@@ -28,12 +31,12 @@ Chrome and encoding with ffmpeg.
 ```bash
 cd src
 bun add puppeteer-core        # uses an existing Chrome for Testing install
-node render.mjs               # captures 600 frames (30fps × 20s) to frames/ at 2× supersample
+node render.mjs               # captures 837 frames (30fps × 27.9s) to frames/ at 2× supersample
 ffmpeg -y -framerate 30 -i frames/f%05d.png -i music.mp3 \
   -vf "scale=1920:1080:flags=lanczos,format=yuv420p" \
   -c:v libx264 -profile:v high -preset slow -crf 16 \
-  -c:a aac -b:a 192k -af "afade=out:st=19:d=1" \
-  -t 20 -movflags +faststart ../chmonitor-v03-design-launch.mp4
+  -c:a aac -b:a 192k -af "afade=out:st=26.9:d=1" \
+  -t 27.9 -movflags +faststart ../chmonitor-v03-design-launch.mp4
 ```
 
 `render.mjs` hardcodes a Chrome-for-Testing path — update `CHROME` to your local
@@ -44,7 +47,7 @@ install. Frames and `node_modules/` are gitignored.
 - `src/animations.jsx` — the film (scenes, timing, layout, copy)
 - `src/index.html` — harness that mounts `<Video orientation="landscape">`
 - `src/render.mjs` — puppeteer seek-and-screenshot renderer
-- `src/music.mp3` — 20.5s music bed (ElevenLabs Music)
+- `src/music.mp3` — ~28s music bed (ElevenLabs Music)
 - `src/shots/*.png` — product screenshots (from `apps/landing/public/landing-assets`)
 - `src/clips/*.mp4` — live screen recordings (constant 30fps)
 

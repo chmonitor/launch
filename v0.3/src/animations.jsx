@@ -1849,24 +1849,28 @@ function MontageFrame({ lt, L, shots }) {
 function MontageScene({ lt, L }) {
   const shots = [
     {
-      src: R('gMetrics', 'shots/g-metrics.png'),
-      url: 'dash.chmonitor.dev/metrics',
+      src: R('gRunning', 'shots/g-running.png'),
+      url: 'dash.chmonitor.dev/overview',
     },
     {
       src: R('gExpensive', 'shots/g-expensive.png'),
       url: 'dash.chmonitor.dev/queries/expensive',
     },
     {
-      src: R('gExplain', 'shots/g-explain.png'),
-      url: 'dash.chmonitor.dev/queries/explain',
-    },
-    {
       src: R('mcpServer', 'shots/mcp-server.png'),
       url: 'dash.chmonitor.dev/operations/mcp-server',
     },
     {
-      src: R('healthAudit', 'shots/health-audit.png'),
-      url: 'dash.chmonitor.dev/health/audit',
+      src: R('heroAgent', 'shots/hero-agent.png'),
+      url: 'dash.chmonitor.dev/ai-agent',
+    },
+    {
+      src: R('heroHealth', 'shots/hero-health.png'),
+      url: 'dash.chmonitor.dev/health',
+    },
+    {
+      src: R('dxQuery', 'shots/data-explorer-query.png'),
+      url: 'dash.chmonitor.dev/tables/data-explorer',
     },
   ]
   return (
@@ -1876,7 +1880,7 @@ function MontageScene({ lt, L }) {
         L={L}
         label="AND A LOT MORE"
         title="15+ pages. 71 charts."
-        line="Metrics, expensive & slow queries, EXPLAIN, the MCP server, backups and page-view analytics."
+        line="Expensive & slow queries, the MCP server, backups, storage, replication and page-view analytics."
         chips={[
           { text: 'PeerDB', color: ORANGE },
           { text: 'Replication', color: GREEN },
@@ -1894,7 +1898,7 @@ function Video({ orientation }) {
     <Stage
       width={L.W}
       height={L.H}
-      duration={20}
+      duration={27.9}
       background={BG}
       persistKey={'chmv03_' + (L.portrait ? 'p' : 'l')}
     >
@@ -1932,7 +1936,7 @@ function Video({ orientation }) {
         )}
       </Scene>
 
-      <Scene start={4.85} end={7.3}>
+      <Scene start={4.85} end={6.9}>
         {(lt) => (
           <>
             <CaptionPanel
@@ -1957,7 +1961,7 @@ function Video({ orientation }) {
         )}
       </Scene>
 
-      <Scene start={7.15} end={9.2}>
+      <Scene start={6.75} end={8.8}>
         {(lt) => (
           <>
             <CaptionPanel
@@ -1984,7 +1988,7 @@ function Video({ orientation }) {
         )}
       </Scene>
 
-      <Scene start={9.05} end={11.4}>
+      <Scene start={8.65} end={11.0}>
         {(lt) => (
           <>
             <CaptionPanel
@@ -2004,50 +2008,150 @@ function Video({ orientation }) {
               L={L}
               url="dash.chmonitor.dev/tables/data-explorer"
               src="clips/explorer.mp4"
-              trim={7.2}
-              speed={1.3}
+              trim={0}
+              speed={1}
             />
           </>
         )}
       </Scene>
 
-      <Scene start={11.25} end={13.8}>
+      <Scene start={10.85} end={12.9}>
         {(lt) => (
           <>
             <CaptionPanel
               lt={lt}
               L={L}
-              label="TOPOLOGY & HEALTH"
-              title="See the whole cluster."
-              line="Topology, Keeper quorum, replication lag and disk usage — visualized, then summarized at a glance."
+              label="AI INSIGHTS · NEW"
+              title="Issues, surfaced for you."
+              line="Anomalies, slow patterns and regressions — detected automatically and ranked by severity."
               chips={[
-                { text: 'Quorum healthy', color: GREEN },
-                { text: 'Replication lag', color: ORANGE },
-                { text: 'Disk 74%', color: GREEN },
+                { text: 'Anomaly detection', color: ORANGE },
+                { text: 'Severity-ranked', color: GREEN },
+                { text: 'Auto-refresh', color: ORANGE },
+              ]}
+            />
+            <Frame
+              lt={lt}
+              L={L}
+              url="dash.chmonitor.dev/insights"
+              src={R('gInsights', 'shots/g-insights.png')}
+            />
+          </>
+        )}
+      </Scene>
+
+      <Scene start={12.75} end={14.8}>
+        {(lt) => (
+          <>
+            <CaptionPanel
+              lt={lt}
+              L={L}
+              label="METRICS & PROFILER"
+              title="Every server metric."
+              line="CPU, memory and IO with ClickHouse profiler events — charted over time, down to the function."
+              chips={[
+                { text: 'CPU · memory · IO', color: ORANGE },
+                { text: 'Profiler events', color: GREEN },
+                { text: 'Time-series', color: ORANGE },
+              ]}
+            />
+            <Frame
+              lt={lt}
+              L={L}
+              url="dash.chmonitor.dev/metrics"
+              src={R('gMetrics', 'shots/g-metrics.png')}
+            />
+          </>
+        )}
+      </Scene>
+
+      <Scene start={14.65} end={16.7}>
+        {(lt) => (
+          <>
+            <CaptionPanel
+              lt={lt}
+              L={L}
+              label="QUERY EXPLAIN"
+              title="See the query plan."
+              line="Visualize EXPLAIN as a tree — spot full scans, missing indexes and where the time goes."
+              chips={[
+                { text: 'EXPLAIN tree', color: ORANGE },
+                { text: 'Spot full scans', color: GREEN },
+                { text: 'One click', color: ORANGE },
+              ]}
+            />
+            <Frame
+              lt={lt}
+              L={L}
+              url="dash.chmonitor.dev/queries/explain"
+              src={R('gExplain', 'shots/g-explain.png')}
+            />
+          </>
+        )}
+      </Scene>
+
+      <Scene start={16.55} end={18.6}>
+        {(lt) => (
+          <>
+            <CaptionPanel
+              lt={lt}
+              L={L}
+              label="CLUSTER TOPOLOGY"
+              title="See the whole cluster."
+              line="Nodes, shards, replicas and the Keeper quorum — live, with health on every link."
+              chips={[
+                { text: 'Keeper quorum', color: GREEN },
+                { text: 'Replication', color: ORANGE },
+                { text: 'Per-node health', color: GREEN },
               ]}
             />
             <Frame
               lt={lt}
               L={L}
               url="dash.chmonitor.dev/cluster/topology"
-              url2="dash.chmonitor.dev/health"
               src={R('heroTopology', 'shots/hero-topology.png')}
-              src2={R('heroHealth', 'shots/hero-health.png')}
-              swapAt={1.3}
             />
           </>
         )}
       </Scene>
 
-      <Scene start={13.65} end={16.6}>
+      <Scene start={18.45} end={20.7}>
+        {(lt) => (
+          <>
+            <CaptionPanel
+              lt={lt}
+              L={L}
+              label="HEALTH & AUDIT"
+              title="Catch issues early."
+              line="Color-coded health across the cluster — then hand a ready-made audit prompt to your agent."
+              chips={[
+                { text: 'Color-coded', color: GREEN },
+                { text: 'Thresholds', color: ORANGE },
+                { text: 'Agent-ready audit', color: GREEN },
+              ]}
+            />
+            <Frame
+              lt={lt}
+              L={L}
+              url="dash.chmonitor.dev/health"
+              url2="dash.chmonitor.dev/health/audit"
+              src={R('healthSummary', 'shots/health-summary.png')}
+              src2={R('healthAudit', 'shots/health-audit.png')}
+              swapAt={1.25}
+            />
+          </>
+        )}
+      </Scene>
+
+      <Scene start={20.55} end={23.3}>
         {(lt) => <MontageScene lt={lt} L={L} />}
       </Scene>
 
-      <Scene start={16.45} end={18.6}>
+      <Scene start={23.15} end={25.5}>
         {(lt) => <HostScene lt={lt} L={L} />}
       </Scene>
 
-      <Scene start={18.45} end={20}>
+      <Scene start={25.35} end={27.9}>
         {(lt) => <EndScene lt={lt} L={L} />}
       </Scene>
     </Stage>

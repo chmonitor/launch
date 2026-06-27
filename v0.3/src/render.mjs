@@ -3,8 +3,8 @@ import puppeteer from 'puppeteer-core'
 const CHROME = '/Users/duet/.cache/puppeteer/chrome/mac_arm-149.0.7827.22/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing'
 const URL = 'file://' + process.cwd() + '/index.html'
 const FPS = 30
-const DURATION = 20
-const FRAMES = FPS * DURATION // 600 → t = 0 .. 19.9667
+const DURATION = 27.9
+const FRAMES = Math.round(FPS * DURATION) // t = 0 .. DURATION
 
 const browser = await puppeteer.launch({
   executablePath: CHROME,
@@ -25,7 +25,7 @@ for (let i = 0; i < 40; i++) {
 await page.evaluate(() => document.fonts.ready)
 
 // pre-warm: seek through every scene midpoint once so all <img> decode into cache
-const warm = [1.5, 4.0, 6.0, 8.2, 10.2, 12.5, 13.9, 14.4, 14.9, 15.4, 15.9, 17.5, 19.2]
+const warm = [1.5, 4.0, 5.9, 7.7, 9.8, 11.9, 13.8, 15.7, 17.6, 19.6, 21.9, 24.3, 26.6]
 for (const t of warm) {
   await page.evaluate((tt) => window.__seek(tt), t)
   await new Promise((r) => setTimeout(r, 180))
