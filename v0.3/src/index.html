@@ -2010,14 +2010,13 @@ function Video({ orientation }) {
                 { text: 'Readonly-safe', color: ORANGE },
               ]}
             />
-            <Frame
+            <VideoFrame
               lt={lt}
               L={L}
               url="dash.chmonitor.dev/tables/data-explorer"
-              url2="dash.chmonitor.dev/tables/dependencies"
-              src={R('dxQuery', 'shots/data-explorer-query.png')}
-              src2={R('dxGraph', 'shots/data-explorer-graph.png')}
-              swapAt={1.15}
+              src="clips/explorer.mp4"
+              trim={7.2}
+              speed={1.3}
             />
           </>
         )}

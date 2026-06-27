@@ -12,7 +12,7 @@ A faithful render of the "chmonitor v0.3 Launch" Claude Design film
 2. **The Dashboard** — Rebuilt on TanStack Start *(live screen recording)*
 3. **AI Agent** — Ask your cluster anything (over MCP)
 4. **Query Monitoring** — Watch every query, live *(live screen recording)*
-5. **Data Query Explorer** — SQL console → dependency graph
+5. **Data Query Explorer** — dependency graph → SQL console *(live screen recording)*
 6. **Topology & Health** — cluster topology → health summary
 7. **And a lot more** — 15+ pages, 71 charts (montage)
 8. **Self-host anywhere** — Cloudflare Workers / Docker / Kubernetes
