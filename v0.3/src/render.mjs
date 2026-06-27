@@ -39,6 +39,13 @@ for (let i = 0; i < FRAMES; i++) {
   const t = i / FPS
   await page.evaluate((tt) => window.__seek(tt), t)
   await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))))
+  // wait for any <video> to finish decoding the seeked frame
+  await page.evaluate(() => Promise.all([...document.querySelectorAll('video')].map((v) => new Promise((res) => {
+    let n = 0
+    const ok = () => v.readyState >= 2 && !v.seeking
+    if (ok()) return res()
+    const iv = setInterval(() => { if (ok() || ++n > 90) { clearInterval(iv); res() } }, 16)
+  }))))
   await new Promise((r) => setTimeout(r, 70))
   await page.screenshot({ path: `frames/f${pad(i)}.png`, clip, optimizeForSpeed: true })
   if (i % 30 === 0) {

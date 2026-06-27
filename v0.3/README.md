@@ -9,7 +9,7 @@ A faithful render of the "chmonitor v0.3 Launch" Claude Design film
 ## Scenes
 
 1. **Intro** — logo + `v0.3`, "A full rebuild — here's what landed" (8 features · 70+ fixes · 13 perf wins · 3 breaking)
-2. **The Dashboard** — Rebuilt on TanStack Start
+2. **The Dashboard** — Rebuilt on TanStack Start *(live screen recording: overview → insights)*
 3. **AI Agent** — Ask your cluster anything (over MCP)
 4. **Query Monitoring** — Watch every query, live
 5. **Data Query Explorer** — SQL console → dependency graph
@@ -45,7 +45,25 @@ install. Frames and `node_modules/` are gitignored.
 - `src/index.html` — harness that mounts `<Video orientation="landscape">`
 - `src/render.mjs` — puppeteer seek-and-screenshot renderer
 - `src/music.mp3` — 20.5s music bed (ElevenLabs Music)
-- `src/shots/*.png` — 12 product screenshots (from `apps/landing/public/landing-assets`)
+- `src/shots/*.png` — product screenshots (from `apps/landing/public/landing-assets`)
+- `src/clips/*.mp4` — live screen recordings (constant 30fps)
+
+## Mixed media (video + screenshots)
+
+Scenes use either a screenshot (`<Frame>`) or a live recording (`<VideoFrame>`).
+`VideoFrame` drives the clip's `currentTime` from the scene clock
+(`currentTime = trim + lt * speed`), so it renders deterministically frame-by-frame
+just like the rest of the film — `render.mjs` waits for each `<video>` to finish
+decoding (`readyState ≥ 2 && !seeking`) before each screenshot.
+
+To add a recording: re-encode to **constant frame rate** first (macOS `.mov`
+recordings are VFR and seek inaccurately), drop it in `src/clips/`, and point a
+scene's `VideoFrame src` at it.
+
+```bash
+ffmpeg -i screen.mov -vf "fps=30" -c:v libx264 -crf 18 -pix_fmt yuv420p -an \
+  -movflags +faststart src/clips/<name>.mp4
+```
 
 ## Notes
 

@@ -995,6 +995,143 @@ function Frame({ lt, L, url, url2, src, src2, swapAt }) {
   )
 }
 
+// Like Frame, but plays a recorded clip whose currentTime is driven by the
+// scene clock (deterministic, seek-safe). videoTime = trim + lt * speed.
+function VideoFrame({ lt, L, url, src, trim = 0, speed = 1 }) {
+  const { x, y, w } = L.frame
+  const vref = React.useRef(null)
+  const [aspect, setAspect] = React.useState(1.78)
+  const ent = Easing.easeOutCubic(clamp(lt / 0.4, 0, 1))
+  const wY = lerp(22, 0, ent)
+  const barH = 48
+  const contentH = w / aspect
+  const winH = contentH + barH
+  const top = L.portrait ? y : Math.round((L.H - winH) / 2)
+  const target = Math.max(0, trim + lt * speed)
+  React.useLayoutEffect(() => {
+    const v = vref.current
+    if (!v || !isFinite(target)) return
+    const dur = v.duration || 0
+    const tt = dur ? Math.min(target, dur - 0.04) : target
+    if (Math.abs((v.currentTime || 0) - tt) > 0.004) {
+      try {
+        v.currentTime = tt
+      } catch {}
+    }
+  })
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: x,
+        top,
+        width: w,
+        height: winH,
+        transform: `translateY(${wY}px)`,
+        opacity: ent,
+        borderRadius: 20,
+        overflow: 'hidden',
+        background: '#0f0f11',
+        border: '1px solid rgba(255,255,255,0.10)',
+        boxShadow:
+          '0 54px 140px -30px rgba(0,0,0,0.88), 0 0 0 1px rgba(255,255,255,0.03)',
+      }}
+    >
+      <div
+        style={{
+          height: barH,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 11,
+          padding: '0 20px',
+          background: 'linear-gradient(#1a1a1d,#161618)',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+        }}
+      >
+        <span
+          style={{
+            width: 13,
+            height: 13,
+            borderRadius: 7,
+            background: '#ff5f57',
+          }}
+        />
+        <span
+          style={{
+            width: 13,
+            height: 13,
+            borderRadius: 7,
+            background: '#febc2e',
+          }}
+        />
+        <span
+          style={{
+            width: 13,
+            height: 13,
+            borderRadius: 7,
+            background: '#28c840',
+          }}
+        />
+        <div
+          style={{
+            marginLeft: 16,
+            height: 30,
+            flex: 1,
+            maxWidth: 520,
+            borderRadius: 8,
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 9,
+            padding: '0 14px',
+            fontFamily: MONO,
+            fontSize: 14,
+            color: 'rgba(250,250,250,0.6)',
+          }}
+        >
+          <span
+            style={{ width: 6, height: 6, borderRadius: 3, background: GREEN }}
+          />
+          {url}
+        </div>
+      </div>
+      <div
+        style={{
+          position: 'absolute',
+          top: barH,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          overflow: 'hidden',
+          background: '#fff',
+        }}
+      >
+        <video
+          ref={vref}
+          src={src}
+          muted
+          playsInline
+          preload="auto"
+          onLoadedMetadata={(e) => {
+            const a = e.target.videoWidth / e.target.videoHeight
+            if (a) setAspect(a)
+          }}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain',
+            objectPosition: 'center top',
+            display: 'block',
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
 function Pill({ text, color, size = 18, style }) {
   return (
     <span
@@ -1794,11 +1931,13 @@ function Video({ orientation }) {
                 { text: '71 live charts', color: ORANGE },
               ]}
             />
-            <Frame
+            <VideoFrame
               lt={lt}
               L={L}
               url="dash.chmonitor.dev/overview"
-              src={R('heroOverview', 'shots/hero-overview.png')}
+              src="clips/overview-insights.mp4"
+              trim={0}
+              speed={1}
             />
           </>
         )}
@@ -1927,8 +2066,6 @@ function Video({ orientation }) {
 
 window.Video = Video
 
-// ── mount (landscape) ──
 const __root = ReactDOM.createRoot(document.getElementById('app'));
 __root.render(React.createElement(window.Video, { orientation: 'landscape' }));
-window.__seek = window.__seek || null;
 </script></body></html>
