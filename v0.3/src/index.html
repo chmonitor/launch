@@ -7,6 +7,7 @@
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone@7/babel.min.js" crossorigin></script>
+<script src="https://unpkg.com/lottie-web@5.12.2/build/player/lottie_light.min.js" crossorigin></script>
 </head><body><div id="app"></div>
 <script type="text/babel" data-presets="react">
 // chmonitor v0.3 launch film — extracted source (animations.jsx)
@@ -775,6 +776,44 @@ function Backdrop() {
   )
 }
 
+// "monitor pulse" — concentric rings radiating from the logo (Lottie/Bodymovin,
+// rendered by lottie-web). Authored deterministically: driven by the film clock
+// via goToAndStop, never autoplayed, so every frame is reproducible.
+const PULSE_LOTTIE = {"v":"5.7.0","fr":30,"ip":0,"op":90,"w":600,"h":600,"nm":"monitor-pulse","ddd":0,"assets":[],"layers":[{"ddd":0,"ind":1,"ty":4,"nm":"ring-1","sr":1,"ks":{"o":{"a":1,"k":[{"t":0,"s":[0],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":11,"s":[55.00000000000001],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":60,"s":[0]}]},"r":{"a":0,"k":0},"p":{"a":0,"k":[300,300,0]},"a":{"a":0,"k":[0,0,0]},"s":{"a":1,"k":[{"t":0,"s":[8,8],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":60,"s":[150,150]}]}},"ao":0,"ip":0,"op":90,"st":0,"bm":0,"shapes":[{"ty":"gr","nm":"ring","it":[{"ty":"el","d":1,"s":{"a":0,"k":[220,220]},"p":{"a":0,"k":[0,0]},"nm":"e"},{"ty":"st","c":{"a":0,"k":[0.976,0.451,0.086,1]},"o":{"a":0,"k":100},"w":{"a":0,"k":5},"lc":2,"lj":1,"ml":4,"nm":"s"},{"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}]}]},{"ddd":0,"ind":2,"ty":4,"nm":"ring-2","sr":1,"ks":{"o":{"a":1,"k":[{"t":15,"s":[0],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":26,"s":[40],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":75,"s":[0]}]},"r":{"a":0,"k":0},"p":{"a":0,"k":[300,300,0]},"a":{"a":0,"k":[0,0,0]},"s":{"a":1,"k":[{"t":15,"s":[8,8],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":75,"s":[150,150]}]}},"ao":0,"ip":0,"op":90,"st":0,"bm":0,"shapes":[{"ty":"gr","nm":"ring","it":[{"ty":"el","d":1,"s":{"a":0,"k":[220,220]},"p":{"a":0,"k":[0,0]},"nm":"e"},{"ty":"st","c":{"a":0,"k":[0.976,0.451,0.086,1]},"o":{"a":0,"k":100},"w":{"a":0,"k":4},"lc":2,"lj":1,"ml":4,"nm":"s"},{"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}]}]},{"ddd":0,"ind":3,"ty":4,"nm":"ring-3","sr":1,"ks":{"o":{"a":1,"k":[{"t":30,"s":[0],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":41,"s":[30],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":90,"s":[0]}]},"r":{"a":0,"k":0},"p":{"a":0,"k":[300,300,0]},"a":{"a":0,"k":[0,0,0]},"s":{"a":1,"k":[{"t":30,"s":[8,8],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":90,"s":[150,150]}]}},"ao":0,"ip":0,"op":90,"st":0,"bm":0,"shapes":[{"ty":"gr","nm":"ring","it":[{"ty":"el","d":1,"s":{"a":0,"k":[220,220]},"p":{"a":0,"k":[0,0]},"nm":"e"},{"ty":"st","c":{"a":0,"k":[0.063,0.725,0.506,1]},"o":{"a":0,"k":100},"w":{"a":0,"k":4},"lc":2,"lj":1,"ml":4,"nm":"s"},{"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}]}]},{"ddd":0,"ind":4,"ty":4,"nm":"core","sr":1,"ks":{"o":{"a":1,"k":[{"t":0,"s":[0],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":18,"s":[85]},{"t":70,"s":[85],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":90,"s":[60]}]},"r":{"a":0,"k":0},"p":{"a":0,"k":[300,300,0]},"a":{"a":0,"k":[0,0,0]},"s":{"a":1,"k":[{"t":0,"s":[60,60],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":45,"s":[100,100],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":90,"s":[78,78]}]}},"ao":0,"ip":0,"op":90,"st":0,"bm":0,"shapes":[{"ty":"gr","nm":"dot","it":[{"ty":"el","d":1,"s":{"a":0,"k":[44,44]},"p":{"a":0,"k":[0,0]},"nm":"e"},{"ty":"fl","c":{"a":0,"k":[0.976,0.451,0.086,1]},"o":{"a":0,"k":100},"r":1,"nm":"f"},{"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}]}]}]}
+
+// Deterministic Lottie surface: loads animationData once, then maps a 0..1
+// `progress` onto the timeline with goToAndStop so headless seeking is exact.
+function Lottie({ data, size, progress = 0, loops = 1, opacity = 1, style }) {
+  const host = React.useRef(null)
+  const anim = React.useRef(null)
+  React.useLayoutEffect(() => {
+    if (!host.current || !window.lottie) return
+    const a = window.lottie.loadAnimation({
+      container: host.current,
+      renderer: 'svg',
+      loop: false,
+      autoplay: false,
+      animationData: data,
+      rendererSettings: { preserveAspectRatio: 'xMidYMid meet', progressiveLoad: false },
+    })
+    anim.current = a
+    return () => { a.destroy(); anim.current = null }
+  }, [data])
+  React.useLayoutEffect(() => {
+    const a = anim.current
+    if (!a) return
+    const total = a.getDuration(true) || 1
+    const f = (clamp(progress, 0, 1) * loops % 1) * (total - 1)
+    a.goToAndStop(f, true)
+  })
+  return (
+    <div
+      ref={host}
+      style={{ width: size, height: size, opacity, pointerEvents: 'none', ...style }}
+    />
+  )
+}
+
 function LogoBars({ size = 64, t = 1 }) {
   const bars = [
     { x: 9.3, y: 19.05, h: 15.45 },
@@ -829,13 +868,13 @@ const LAND = {
   portrait: false,
   W: 1920,
   H: 1080,
-  panel: { left: 116, width: 560, vcenter: true },
-  frame: { x: 712, y: 150, w: 1108 },
-  labelSize: 18,
-  titleSize: 70,
-  lineSize: 25,
-  lineMax: 520,
-  chipSize: 18,
+  panel: { left: 104, width: 624, vcenter: true },
+  frame: { x: 760, y: 150, w: 1060 },
+  labelSize: 20,
+  titleSize: 88,
+  lineSize: 30,
+  lineMax: 600,
+  chipSize: 20,
 }
 const PORT = {
   portrait: true,
@@ -1250,9 +1289,9 @@ function CaptionPanel({ lt, L, label, title, line, chips }) {
 function IntroScene({ lt, L }) {
   const t = clamp(lt / 1.25, 0, 1)
   const por = L.portrait
-  const mark = por ? 168 : 150
-  const word = por ? 150 : 130
-  const tag = por ? 34 : 26
+  const mark = por ? 188 : 172
+  const word = por ? 168 : 150
+  const tag = por ? 38 : 34
   const stats = [
     { n: '8', l: 'features', c: ORANGE },
     { n: '70+', l: 'fixes', c: GREEN },
@@ -1280,7 +1319,20 @@ function IntroScene({ lt, L }) {
           gap: por ? 28 : 26,
         }}
       >
-        <LogoBars size={mark} t={t} />
+        <div style={{ position: 'relative', display: 'grid', placeItems: 'center' }}>
+          <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 0 }}>
+            <Lottie
+              data={PULSE_LOTTIE}
+              size={mark * 3.0}
+              progress={clamp(lt / 3.0, 0, 1)}
+              loops={2}
+              opacity={0.95}
+            />
+          </div>
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <LogoBars size={mark} t={t} />
+          </div>
+        </div>
         <div
           style={{
             ...fu(lt, 0.55, 0.6, 18),
@@ -1305,12 +1357,12 @@ function IntroScene({ lt, L }) {
             style={{
               marginTop: por ? 6 : 8,
               fontFamily: MONO,
-              fontSize: por ? 28 : 24,
+              fontSize: por ? 32 : 28,
               fontWeight: 500,
               color: '#fff',
               background: ORANGE,
-              padding: '8px 15px',
-              borderRadius: 11,
+              padding: '9px 17px',
+              borderRadius: 12,
               letterSpacing: '0.01em',
             }}
           >
@@ -1355,7 +1407,7 @@ function IntroScene({ lt, L }) {
               <div
                 style={{
                   fontFamily: SANS,
-                  fontSize: por ? 74 : 62,
+                  fontSize: por ? 88 : 78,
                   fontWeight: 700,
                   letterSpacing: '-0.03em',
                   color: s.c,
@@ -1367,11 +1419,11 @@ function IntroScene({ lt, L }) {
               <div
                 style={{
                   fontFamily: MONO,
-                  fontSize: por ? 17 : 15,
+                  fontSize: por ? 19 : 16,
                   letterSpacing: '0.16em',
                   textTransform: 'uppercase',
                   color: FAINT,
-                  marginTop: 11,
+                  marginTop: 12,
                 }}
               >
                 {s.l}
@@ -1646,15 +1698,28 @@ function EndScene({ lt, L }) {
           ...fu(lt, 0.05, 0.55),
           display: 'flex',
           alignItems: 'center',
-          gap: 18,
-          marginBottom: 32,
+          gap: 20,
+          marginBottom: 34,
         }}
       >
-        <LogoBars size={por ? 64 : 56} t={1} />
+        <div style={{ position: 'relative', display: 'grid', placeItems: 'center' }}>
+          <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 0 }}>
+            <Lottie
+              data={PULSE_LOTTIE}
+              size={(por ? 72 : 62) * 3.2}
+              progress={clamp(lt / 1.6, 0, 1)}
+              loops={1}
+              opacity={0.9}
+            />
+          </div>
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <LogoBars size={por ? 72 : 62} t={1} />
+          </div>
+        </div>
         <span
           style={{
             fontFamily: SANS,
-            fontSize: por ? 56 : 50,
+            fontSize: por ? 60 : 56,
             fontWeight: 700,
             letterSpacing: '-0.03em',
             color: INK,
