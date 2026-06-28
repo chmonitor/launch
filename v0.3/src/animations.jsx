@@ -120,7 +120,7 @@ function TextSprite({
   y = 0,
   size = 48,
   color = '#111',
-  font = 'Inter, system-ui, sans-serif',
+  font = "'Space Grotesk', system-ui, sans-serif",
   weight = 600,
   entryDur = 0.45,
   exitDur = 0.35,
@@ -417,7 +417,7 @@ function Stage({
         flexDirection: 'column',
         alignItems: 'center',
         background: '#0a0a0a',
-        fontFamily: 'Inter, system-ui, sans-serif',
+        fontFamily: "'Space Grotesk', system-ui, sans-serif",
       }}
     >
       <div
@@ -541,7 +541,7 @@ function PlaybackBar({
         alignSelf: 'center',
         borderRadius: 8,
         color: '#f6f4ef',
-        fontFamily: 'Inter, system-ui, sans-serif',
+        fontFamily: "'Space Grotesk', system-ui, sans-serif",
         userSelect: 'none',
         flexShrink: 0,
       }}
@@ -702,7 +702,7 @@ const MUT = 'rgba(250,250,250,0.62)'
 const FAINT = 'rgba(250,250,250,0.40)'
 const ORANGE = '#f97316'
 const GREEN = '#10b981'
-const SANS = "'Inter', system-ui, -apple-system, sans-serif"
+const SANS = "'Space Grotesk', system-ui, -apple-system, sans-serif"
 const MONO = "'JetBrains Mono', ui-monospace, SFMono-Regular, monospace"
 
 const R = (id, path) =>
@@ -733,8 +733,10 @@ function Scene({ start, end, children }) {
 
 function Backdrop() {
   const time = useTime()
-  const dx = Math.sin(time * 0.18) * 60
-  const dy = Math.cos(time * 0.14) * 50
+  // one anchor + one derived field on one ground: a single warm emanation that
+  // slowly breathes from the visual center, echoing the monitor-pulse motif.
+  const breathe = 0.5 + 0.5 * Math.sin(time * 0.5)
+  const glow = 0.05 + 0.03 * breathe
   return (
     <div
       style={{
@@ -747,9 +749,8 @@ function Backdrop() {
       <div
         style={{
           position: 'absolute',
-          inset: -200,
-          background: `radial-gradient(680px 520px at ${78 + dx / 18}% ${14 + dy / 30}%, rgba(249,115,22,0.16), transparent 60%),
-                     radial-gradient(720px 560px at ${16 - dx / 22}% ${88 - dy / 26}%, rgba(16,185,129,0.12), transparent 62%)`,
+          inset: 0,
+          background: `radial-gradient(900px 760px at 50% 42%, rgba(249,115,22,${glow.toFixed(3)}), transparent 64%)`,
         }}
       />
       <div
@@ -757,7 +758,7 @@ function Backdrop() {
           position: 'absolute',
           inset: 0,
           background:
-            'radial-gradient(120% 120% at 50% 40%, transparent 55%, rgba(0,0,0,0.55) 100%)',
+            'radial-gradient(125% 125% at 50% 42%, transparent 52%, rgba(0,0,0,0.6) 100%)',
         }}
       />
     </div>
@@ -767,7 +768,7 @@ function Backdrop() {
 // "monitor pulse" — concentric rings radiating from the logo (Lottie/Bodymovin,
 // rendered by lottie-web). Authored deterministically: driven by the film clock
 // via goToAndStop, never autoplayed, so every frame is reproducible.
-const PULSE_LOTTIE = {"v":"5.7.0","fr":30,"ip":0,"op":90,"w":600,"h":600,"nm":"monitor-pulse","ddd":0,"assets":[],"layers":[{"ddd":0,"ind":1,"ty":4,"nm":"ring-1","sr":1,"ks":{"o":{"a":1,"k":[{"t":0,"s":[0],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":11,"s":[55.00000000000001],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":60,"s":[0]}]},"r":{"a":0,"k":0},"p":{"a":0,"k":[300,300,0]},"a":{"a":0,"k":[0,0,0]},"s":{"a":1,"k":[{"t":0,"s":[8,8],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":60,"s":[150,150]}]}},"ao":0,"ip":0,"op":90,"st":0,"bm":0,"shapes":[{"ty":"gr","nm":"ring","it":[{"ty":"el","d":1,"s":{"a":0,"k":[220,220]},"p":{"a":0,"k":[0,0]},"nm":"e"},{"ty":"st","c":{"a":0,"k":[0.976,0.451,0.086,1]},"o":{"a":0,"k":100},"w":{"a":0,"k":5},"lc":2,"lj":1,"ml":4,"nm":"s"},{"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}]}]},{"ddd":0,"ind":2,"ty":4,"nm":"ring-2","sr":1,"ks":{"o":{"a":1,"k":[{"t":15,"s":[0],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":26,"s":[40],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":75,"s":[0]}]},"r":{"a":0,"k":0},"p":{"a":0,"k":[300,300,0]},"a":{"a":0,"k":[0,0,0]},"s":{"a":1,"k":[{"t":15,"s":[8,8],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":75,"s":[150,150]}]}},"ao":0,"ip":0,"op":90,"st":0,"bm":0,"shapes":[{"ty":"gr","nm":"ring","it":[{"ty":"el","d":1,"s":{"a":0,"k":[220,220]},"p":{"a":0,"k":[0,0]},"nm":"e"},{"ty":"st","c":{"a":0,"k":[0.976,0.451,0.086,1]},"o":{"a":0,"k":100},"w":{"a":0,"k":4},"lc":2,"lj":1,"ml":4,"nm":"s"},{"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}]}]},{"ddd":0,"ind":3,"ty":4,"nm":"ring-3","sr":1,"ks":{"o":{"a":1,"k":[{"t":30,"s":[0],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":41,"s":[30],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":90,"s":[0]}]},"r":{"a":0,"k":0},"p":{"a":0,"k":[300,300,0]},"a":{"a":0,"k":[0,0,0]},"s":{"a":1,"k":[{"t":30,"s":[8,8],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":90,"s":[150,150]}]}},"ao":0,"ip":0,"op":90,"st":0,"bm":0,"shapes":[{"ty":"gr","nm":"ring","it":[{"ty":"el","d":1,"s":{"a":0,"k":[220,220]},"p":{"a":0,"k":[0,0]},"nm":"e"},{"ty":"st","c":{"a":0,"k":[0.063,0.725,0.506,1]},"o":{"a":0,"k":100},"w":{"a":0,"k":4},"lc":2,"lj":1,"ml":4,"nm":"s"},{"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}]}]},{"ddd":0,"ind":4,"ty":4,"nm":"core","sr":1,"ks":{"o":{"a":1,"k":[{"t":0,"s":[0],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":18,"s":[85]},{"t":70,"s":[85],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":90,"s":[60]}]},"r":{"a":0,"k":0},"p":{"a":0,"k":[300,300,0]},"a":{"a":0,"k":[0,0,0]},"s":{"a":1,"k":[{"t":0,"s":[60,60],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":45,"s":[100,100],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":90,"s":[78,78]}]}},"ao":0,"ip":0,"op":90,"st":0,"bm":0,"shapes":[{"ty":"gr","nm":"dot","it":[{"ty":"el","d":1,"s":{"a":0,"k":[44,44]},"p":{"a":0,"k":[0,0]},"nm":"e"},{"ty":"fl","c":{"a":0,"k":[0.976,0.451,0.086,1]},"o":{"a":0,"k":100},"r":1,"nm":"f"},{"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}]}]}]}
+const PULSE_LOTTIE = {"v":"5.7.0","fr":30,"ip":0,"op":90,"w":600,"h":600,"nm":"monitor-pulse","ddd":0,"assets":[],"layers":[{"ddd":0,"ind":1,"ty":4,"nm":"ring-1","sr":1,"ks":{"o":{"a":1,"k":[{"t":0,"s":[0],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":11,"s":[55.00000000000001],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":60,"s":[0]}]},"r":{"a":0,"k":0},"p":{"a":0,"k":[300,300,0]},"a":{"a":0,"k":[0,0,0]},"s":{"a":1,"k":[{"t":0,"s":[8,8],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":60,"s":[150,150]}]}},"ao":0,"ip":0,"op":90,"st":0,"bm":0,"shapes":[{"ty":"gr","nm":"ring","it":[{"ty":"el","d":1,"s":{"a":0,"k":[220,220]},"p":{"a":0,"k":[0,0]},"nm":"e"},{"ty":"st","c":{"a":0,"k":[0.976,0.451,0.086,1]},"o":{"a":0,"k":100},"w":{"a":0,"k":5},"lc":2,"lj":1,"ml":4,"nm":"s"},{"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}]}]},{"ddd":0,"ind":2,"ty":4,"nm":"ring-2","sr":1,"ks":{"o":{"a":1,"k":[{"t":15,"s":[0],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":26,"s":[40],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":75,"s":[0]}]},"r":{"a":0,"k":0},"p":{"a":0,"k":[300,300,0]},"a":{"a":0,"k":[0,0,0]},"s":{"a":1,"k":[{"t":15,"s":[8,8],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":75,"s":[150,150]}]}},"ao":0,"ip":0,"op":90,"st":0,"bm":0,"shapes":[{"ty":"gr","nm":"ring","it":[{"ty":"el","d":1,"s":{"a":0,"k":[220,220]},"p":{"a":0,"k":[0,0]},"nm":"e"},{"ty":"st","c":{"a":0,"k":[0.976,0.451,0.086,1]},"o":{"a":0,"k":100},"w":{"a":0,"k":4},"lc":2,"lj":1,"ml":4,"nm":"s"},{"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}]}]},{"ddd":0,"ind":3,"ty":4,"nm":"ring-3","sr":1,"ks":{"o":{"a":1,"k":[{"t":30,"s":[0],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":41,"s":[30],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":90,"s":[0]}]},"r":{"a":0,"k":0},"p":{"a":0,"k":[300,300,0]},"a":{"a":0,"k":[0,0,0]},"s":{"a":1,"k":[{"t":30,"s":[8,8],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":90,"s":[150,150]}]}},"ao":0,"ip":0,"op":90,"st":0,"bm":0,"shapes":[{"ty":"gr","nm":"ring","it":[{"ty":"el","d":1,"s":{"a":0,"k":[220,220]},"p":{"a":0,"k":[0,0]},"nm":"e"},{"ty":"st","c":{"a":0,"k":[0.976,0.451,0.086,1]},"o":{"a":0,"k":100},"w":{"a":0,"k":3},"lc":2,"lj":1,"ml":4,"nm":"s"},{"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}]}]},{"ddd":0,"ind":4,"ty":4,"nm":"core","sr":1,"ks":{"o":{"a":1,"k":[{"t":0,"s":[0],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":18,"s":[85]},{"t":70,"s":[85],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":90,"s":[60]}]},"r":{"a":0,"k":0},"p":{"a":0,"k":[300,300,0]},"a":{"a":0,"k":[0,0,0]},"s":{"a":1,"k":[{"t":0,"s":[60,60],"o":{"x":0.16,"y":1},"i":{"x":0.3,"y":1}},{"t":45,"s":[100,100],"o":{"x":0.4,"y":0},"i":{"x":0.7,"y":1}},{"t":90,"s":[78,78]}]}},"ao":0,"ip":0,"op":90,"st":0,"bm":0,"shapes":[{"ty":"gr","nm":"dot","it":[{"ty":"el","d":1,"s":{"a":0,"k":[44,44]},"p":{"a":0,"k":[0,0]},"nm":"e"},{"ty":"fl","c":{"a":0,"k":[0.976,0.451,0.086,1]},"o":{"a":0,"k":100},"r":1,"nm":"f"},{"ty":"tr","p":{"a":0,"k":[0,0]},"a":{"a":0,"k":[0,0]},"s":{"a":0,"k":[100,100]},"r":{"a":0,"k":0},"o":{"a":0,"k":100}}]}]}]}
 
 // Deterministic Lottie surface: loads animationData once, then maps a 0..1
 // `progress` onto the timeline with goToAndStop so headless seeking is exact.
@@ -1183,7 +1184,7 @@ function Pill({ text, color, size = 18, style }) {
           width: size * 0.42,
           height: size * 0.42,
           borderRadius: 99,
-          background: color || ORANGE,
+          background: ORANGE,
         }}
       />
       {text}
@@ -1282,9 +1283,9 @@ function IntroScene({ lt, L }) {
   const tag = por ? 38 : 34
   const stats = [
     { n: '8', l: 'features', c: ORANGE },
-    { n: '70+', l: 'fixes', c: GREEN },
-    { n: '13', l: 'perf wins', c: ORANGE },
-    { n: '3', l: 'breaking', c: GREEN },
+    { n: '70+', l: 'fixes', c: INK },
+    { n: '13', l: 'perf wins', c: INK },
+    { n: '3', l: 'breaking', c: INK },
   ]
   return (
     <div
