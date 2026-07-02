@@ -2,3 +2,8 @@ node_modules/
 frames/
 renders/work-*/
 .DS_Store
+
+# render/encode scratch
+render-duration.txt
+music.wav
+package-lock.json

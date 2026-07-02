@@ -76,7 +76,24 @@ path from `$CHROME` (any Chromium works). Frames and `node_modules/` are gitigno
 kick, a warm plucked bass, an arp and a soft pad over an Am–F–C–G loop, computed
 sample-by-sample (no samples, no stock/AI track) so it is reproducible. It has a
 soft intro, a fuller body and a gentle outro; the final 1s fade is applied by
-ffmpeg at render time.
+ffmpeg at render time. Regenerate it deterministically with:
+
+```bash
+cd src
+node scripts/synth-music.mjs music.wav
+ffmpeg -y -i music.wav \
+  -af "highpass=f=30,lowpass=f=15800,alimiter=limit=0.97:level=false" \
+  -c:a libmp3lame -b:a 192k music.mp3 && rm music.wav
+```
+
+## Continuous rendering (CI)
+
+`.github/workflows/render.yml` re-renders the film and commits the finished LFS
+media (the MP4 and the synthesized `music.mp3`) back whenever the **source**
+changes on `main` (or on manual dispatch). This lets the reproducible source land
+via PR while CI produces the binaries — useful when a contributor's environment
+can't push Git LFS objects. The workflow only triggers on source paths, never on
+the media it writes, so it cannot loop.
 
 ## Mixed media (video + screenshots)
 

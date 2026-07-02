@@ -1,0 +1,95 @@
+name: Render launch film
+
+# Re-renders the v0.3 launch film from source and commits the finished LFS media
+# (MP4 + the synthesized music.mp3) back. This closes the loop for environments
+# that can't push Git LFS objects: the source lands via PR, CI produces and
+# commits the binaries. Triggers only on source changes (never on the media it
+# writes, so it can't loop) and on manual dispatch.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'v0.3/src/index.html'
+      - 'v0.3/src/animations.jsx'
+      - 'v0.3/src/render.mjs'
+      - 'v0.3/src/vendor/**'
+      - 'v0.3/src/fonts/**'
+      - 'v0.3/src/shots/**'
+      - 'v0.3/src/clips/**'
+      - 'v0.3/src/scripts/synth-music.mjs'
+      - '.github/workflows/render.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: render-v03
+  cancel-in-progress: true
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install Chrome
+        id: chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Install puppeteer-core
+        working-directory: v0.3/src
+        run: npm install --no-save puppeteer-core@23
+
+      - name: Regenerate music (deterministic synth)
+        working-directory: v0.3/src
+        run: |
+          node scripts/synth-music.mjs music.wav
+          ffmpeg -y -i music.wav \
+            -af "highpass=f=30,lowpass=f=15800,alimiter=limit=0.97:level=false" \
+            -c:a libmp3lame -b:a 192k music.mp3
+          rm -f music.wav
+
+      - name: Render frames
+        working-directory: v0.3/src
+        env:
+          CHROME: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          rm -rf frames && mkdir -p frames
+          node render.mjs
+
+      - name: Encode MP4
+        working-directory: v0.3/src
+        run: |
+          DUR=$(cat render-duration.txt)
+          FADE=$(awk "BEGIN{printf \"%.3f\", $DUR - 1}")
+          echo "duration=$DUR fade_start=$FADE"
+          ffmpeg -y -framerate 30 -i frames/f%05d.png -i music.mp3 \
+            -vf "scale=1920:1080:flags=lanczos,format=yuv420p" \
+            -c:v libx264 -profile:v high -preset slow -crf 16 \
+            -c:a aac -b:a 192k -af "afade=out:st=${FADE}:d=1" \
+            -t "$DUR" -movflags +faststart ../chmonitor-v03-design-launch.mp4
+
+      - name: Commit rendered media
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add v0.3/chmonitor-v03-design-launch.mp4 v0.3/src/music.mp3
+          if git diff --cached --quiet; then
+            echo "No media changes — nothing to commit."
+            exit 0
+          fi
+          git commit -m "chore(v0.3): re-render launch film from source [ci]"
+          git push

@@ -37,6 +37,8 @@ await page.evaluate(() => document.fonts.ready)
 const DURATION = await page.evaluate(() => window.__duration || 31.1)
 const FRAMES = Math.round(FPS * DURATION)
 console.log('duration', DURATION, 's ->', FRAMES, 'frames')
+// emit the derived length so the ffmpeg encode (-t / afade) stays in sync (CI reads this)
+import('node:fs').then((fs) => fs.writeFileSync('render-duration.txt', String(DURATION)))
 
 // pre-warm: seek across the whole timeline so every <img>/<video> decodes to cache
 for (let t = 0.5; t < DURATION; t += 1.4) {
