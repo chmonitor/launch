@@ -1,10 +1,20 @@
+// Deterministic frame capturer for the launch film.
+// Drives the film's own clock via window.__seek(t) and screenshots every frame
+// in headless Chrome, then ffmpeg encodes the PNG sequence + music (see README).
+//
+// The film is fully self-contained: React / Babel / Lottie-free runtime and the
+// fonts are vendored under ./vendor and ./fonts, so the render needs no network.
+//
+//   CHROME=/path/to/chrome node render.mjs
+//
+// CHROME defaults to a Chrome-for-Testing install; point it at any Chromium.
 import puppeteer from 'puppeteer-core'
 
-const CHROME = '/Users/duet/.cache/puppeteer/chrome/mac_arm-149.0.7827.22/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing'
+const CHROME =
+  process.env.CHROME ||
+  '/Users/duet/.cache/puppeteer/chrome/mac_arm-149.0.7827.22/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing'
 const URL = 'file://' + process.cwd() + '/index.html'
 const FPS = 30
-const DURATION = 27.9
-const FRAMES = Math.round(FPS * DURATION) // t = 0 .. DURATION
 
 const browser = await puppeteer.launch({
   executablePath: CHROME,
@@ -24,11 +34,16 @@ for (let i = 0; i < 40; i++) {
 }
 await page.evaluate(() => document.fonts.ready)
 
-// pre-warm: seek through every scene midpoint once so all <img> decode into cache
-const warm = [1.5, 4.0, 5.9, 7.7, 9.8, 11.9, 13.8, 15.7, 17.6, 19.6, 21.9, 24.3, 26.6]
-for (const t of warm) {
+const DURATION = await page.evaluate(() => window.__duration || 31.1)
+const FRAMES = Math.round(FPS * DURATION)
+console.log('duration', DURATION, 's ->', FRAMES, 'frames')
+// emit the derived length so the ffmpeg encode (-t / afade) stays in sync (CI reads this)
+import('node:fs').then((fs) => fs.writeFileSync('render-duration.txt', String(DURATION)))
+
+// pre-warm: seek across the whole timeline so every <img>/<video> decodes to cache
+for (let t = 0.5; t < DURATION; t += 1.4) {
   await page.evaluate((tt) => window.__seek(tt), t)
-  await new Promise((r) => setTimeout(r, 180))
+  await new Promise((r) => setTimeout(r, 160))
 }
 await new Promise((r) => setTimeout(r, 600))
 
@@ -46,7 +61,7 @@ for (let i = 0; i < FRAMES; i++) {
     if (ok()) return res()
     const iv = setInterval(() => { if (ok() || ++n > 90) { clearInterval(iv); res() } }, 16)
   }))))
-  await new Promise((r) => setTimeout(r, 70))
+  await new Promise((r) => setTimeout(r, 60))
   await page.screenshot({ path: `frames/f${pad(i)}.png`, clip, optimizeForSpeed: true })
   if (i % 30 === 0) {
     const el = ((Date.now() - t0) / 1000).toFixed(0)
