@@ -274,7 +274,24 @@ Auto-deployed on every push to `main` via `.github/workflows/pages.yml`.
 
 To add a new release to the landing page, copy the `.vcard` block in `index.html` and update `data-src`, `href`, version chip, title, and description.
 
-## Known outstanding items (v0.3)
+## Redesign notes (v0.3, current cut)
 
-- End card reads `github.com/duyet/clickhouse-monitoring` (pre-rebrand). Fix in `EndScene` in `v0.3/src/index.html` before next render.
-- AI Agent and Topology scenes use static screenshots — replace with live recordings when `agent.mov` and `topology.mov` are available.
+The v0.3 film was redesigned to a flat "instrument / editorial" language — grid
+ground (no breathing glow), numbered cues with ruled kickers + mask-revealed
+titles, flat monospace "spec" tags (`Tag`) instead of glass pills, a hairline
+product window (`Window`, no traffic-light chrome), a persistent `FilmRail`, and
+an original synthesized score. Durable changes worth knowing before the next cut:
+
+- **Self-contained runtime, no CDN.** React / ReactDOM / Babel are vendored under
+  `v0.3/src/vendor/`, fonts under `v0.3/src/fonts/`. The render is fully offline.
+  Babel **7** standalone is required (Babel 8 broke the in-browser `text/babel`
+  runner). The Lottie pulse-ring dependency was removed.
+- **Data-driven timeline.** Scene order/durations live in `buildCues()`; start/end
+  times and the total are derived (0.15s overlaps), exposed as `window.__duration`.
+  `render.mjs` reads it and takes the Chrome path from `$CHROME`.
+- **Original score.** `music.mp3` is synthesized deterministically (no stock/AI
+  track). Regenerate with the Node synth described in `v0.3/README.md` § Music.
+- End card now reads `github.com/chmonitor/chmonitor` (pre-rebrand URL fixed).
+- Most feature scenes use static screenshots (`Frame`); Alerts is a fully-rendered
+  card (no screenshot). Replace AI Agent / Topology stills with live recordings
+  when `agent.mov` / `topology.mov` are available.
