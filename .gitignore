@@ -2,3 +2,36 @@ node_modules/
 frames/
 renders/work-*/
 .DS_Store
+
+# renders and intermediates (final films stay out of sources commits)
+*.mp4
+*.mov
+*.webm
+renders/
+out/
+snapshots/
+work-*/
+*-poster.png
+capture/raw/
+
+# secrets
+.env
+.env.*
+*.log
+
+# screenshots showing private hostnames, IPs or real workload names
+v0.3-remocn*/src/public/screenshots/01-overview-ai-insights.png
+v0.3-remocn*/src/public/screenshots/03-cluster-topology.png
+v0.3-remocn*/src/public/screenshots/05-storage-overview.png
+v0.3-remocn*/src/public/screenshots/09-running-queries-live.png
+v0.3-remocn*/src/public/screenshots/12-data-explorer-dependency-graph.png
+v0.3-remocn*/src/public/screenshots/13-peerdb-mirrors-replication.png
+hero-film/assets/ui/app-sql.png
+hero-film/assets/ui/cluster-topology-light.png
+hero-film/assets/ui/data-explorer-graph-light.png
+hero-film/assets/ui/overview-charts-detailed-light.png
+hero-film/assets/ui/sql-console-light.png
+hero-film/assets/ui/storage-light.png
+
+# stock music, licence unclear
+v0.3.3-remocn/monume-*.mp3
