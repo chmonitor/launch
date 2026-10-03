@@ -6,7 +6,7 @@
     "ver": "v0.3.3",
     "title": "Guest AI caps, alert templates, favorites",
     "sub": "50 pull requests in four days. Cloud guest AI is metered, alerts start from presets.",
-    "src": "../../wt-release-images/assets/screenshots/ai-agent-new-dark.webp",
+    "src": "../../chmonitor/assets/screenshots/ai-agent-new-dark.webp",
     "crop": {
       "x": 0,
       "y": 0,
@@ -19,25 +19,12 @@
     "eyebrow": "AI agent",
     "title": "Pick models dynamically",
     "sub": "AnyRouter presets plus OpenRouter free models, chosen in Agent settings.",
-    "src": "../../wt-release-images/assets/screenshots/ai-agent-settings-dark.webp",
+    "src": "../../chmonitor/assets/screenshots/ai-agent-settings-dark.webp",
     "crop": {
       "x": 60,
       "y": 0,
       "w": 1480,
       "h": 762
-    }
-  },
-  {
-    "name": "settings",
-    "eyebrow": "Settings",
-    "title": "Settings stay in this browser",
-    "sub": "Theme, units, and workspace are local to this browser.",
-    "src": "../../wt-release-images/assets/screenshots/settings-navigation-dark.jpeg",
-    "crop": {
-      "x": 187,
-      "y": 155,
-      "w": 1220,
-      "h": 628
     }
   }
 ]

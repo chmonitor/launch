@@ -1,0 +1,59 @@
+[
+  {
+    "name": "cover",
+    "theme": "dark",
+    "eyebrow": "Release",
+    "ver": "v0.3.4",
+    "title": "Tools, Schema Compare, workspace roles",
+    "sub": "106 pull requests in four days.",
+    "src": "../../chmonitor/assets/screenshots/chm-schema-compare.png",
+    "crop": {
+      "x": 68,
+      "y": 68,
+      "w": 1464,
+      "h": 755
+    }
+  },
+  {
+    "name": "tools-menu",
+    "theme": "dark",
+    "eyebrow": "Tools",
+    "title": "One Tools menu for hands-on work",
+    "sub": "SQL, Explorer, Explain, Advisor, Chart Builder, and compare pages.",
+    "src": "../../chmonitor/assets/screenshots/tools-advisor-dark.jpeg",
+    "crop": {
+      "x": 46,
+      "y": 100,
+      "w": 254,
+      "h": 520
+    }
+  },
+  {
+    "name": "workspace-roles",
+    "theme": "dark",
+    "eyebrow": "Workspace",
+    "title": "Pick a role, slim the sidebar",
+    "sub": "Full, DBA, Engineer, SRE, or Custom. Saved in this browser only.",
+    "src": "../../chmonitor/assets/screenshots/settings-navigation-dark.jpeg",
+    "crop": {
+      "x": 187,
+      "y": 155,
+      "w": 1220,
+      "h": 630
+    }
+  },
+  {
+    "name": "schema-compare",
+    "theme": "dark",
+    "eyebrow": "Tools",
+    "title": "Schema Compare across hosts",
+    "sub": "Diff table DDL. Copy the sync script; nothing is applied.",
+    "src": "../../chmonitor/assets/screenshots/chm-schema-compare.png",
+    "crop": {
+      "x": 68,
+      "y": 68,
+      "w": 1464,
+      "h": 755
+    }
+  }
+]

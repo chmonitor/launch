@@ -6,7 +6,7 @@
     "ver": "v0.3.5 + v0.3.6",
     "title": "Alerts first. Everything else quieter.",
     "sub": "PeerDB alerting, custom webhooks, a local CLI, and a hardened public API.",
-    "src": "../../wt-release-images/assets/screenshots/overview-dark-no-bg.png",
+    "src": "../../chmonitor/assets/screenshots/overview-dark-no-bg.png",
     "crop": { "x": 0, "y": 0, "w": 2000, "h": 1030 }
   },
   {
@@ -14,7 +14,7 @@
     "eyebrow": "Alerting",
     "title": "Health findings, routed your way",
     "sub": "Send alerts to your own HTTPS webhook targets, declared per deployment.",
-    "src": "../../wt-release-images/assets/screenshots/health-summary-no-bg.png",
+    "src": "../../chmonitor/assets/screenshots/health-summary-no-bg.png",
     "crop": { "x": 0, "y": 0, "w": 2744, "h": 1414 }
   }
 ]
