@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Geist"; font-weight: 400 700; src: url("assets/fonts/geist-latin.woff2") format("woff2"); }
+      @font-face { font-family: "Geist Mono"; font-weight: 400; src: url("assets/fonts/geist-mono-latin-400.woff2") format("woff2"); }
+      @font-face { font-family: "Geist Mono"; font-weight: 500; src: url("assets/fonts/geist-mono-latin-500.woff2") format("woff2"); }
+      @font-face { font-family: "Geist Mono"; font-weight: 600; src: url("assets/fonts/geist-mono-latin-600.woff2") format("woff2"); }
+
+      :root {
+        --paper: #fbfaf8;
+        --card: #ffffff;
+        --ink: #26251e;
+        --muted: #5a5852;
+        --soft: #a09c92;
+        --hair: #e7e6e2;
+        --hair-strong: #cfcdc4;
+        --brand: #f54e00;
+        --brand-ink: #b03800;
+        --bar: #f97316;
+        --cap: #10b981;
+        --ok: #1f8a65;
+        --shadow: 0 1px 0 rgba(38, 37, 30, 0.04), 0 18px 40px -14px rgba(38, 37, 30, 0.22), 0 40px 90px -30px rgba(38, 37, 30, 0.18);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--paper); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--paper); font-family: "Geist", ui-sans-serif, system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+      .layer { position: absolute; inset: 0; }
+      .mono { font-family: "Geist Mono", ui-monospace, monospace; }
+
+      /* ── background ─────────────────────────────────────────── */
+      #bg-dots { background-image: radial-gradient(rgba(38, 37, 30, 0.13) 1.3px, transparent 1.6px); background-size: 34px 34px; background-position: 0 0; }
+      #bg-dots-mask { position: absolute; inset: 0; background: radial-gradient(ellipse 62% 58% at 50% 48%, var(--paper) 0%, rgba(251, 250, 248, 0.86) 45%, rgba(251, 250, 248, 0) 100%); }
+      #bg-wash { position: absolute; left: 260px; top: -520px; width: 1400px; height: 900px; border-radius: 50%; background: radial-gradient(closest-side, rgba(245, 78, 0, 0.16), rgba(245, 78, 0, 0.05) 55%, rgba(245, 78, 0, 0) 100%); }
+      #bg-wash2 { position: absolute; left: 1180px; top: 640px; width: 1100px; height: 800px; border-radius: 50%; background: radial-gradient(closest-side, rgba(16, 185, 129, 0.09), rgba(16, 185, 129, 0) 100%); }
+      #bg-skyline { position: absolute; inset: 0; color: var(--brand); }
+      #grain { position: absolute; inset: -40px; opacity: 0.07; mix-blend-mode: multiply; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.14 0 0 0 0 0.12 0 0 0 1.1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+      /* equalizer skyline — the music made visible */
+      #eq { position: absolute; left: 0; right: 0; bottom: 0; height: 190px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 12px; }
+      #eq i { display: block; width: 12px; height: 190px; background: linear-gradient(to top, rgba(249, 115, 22, 0.34), rgba(249, 115, 22, 0.08)); transform-origin: 50% 100%; border-radius: 2px 2px 0 0; }
+
+      /* ── HUD chrome ──────────────────────────────────────────── */
+      #hud .corner { position: absolute; width: 26px; height: 26px; border-color: var(--hair-strong); border-style: solid; border-width: 0; }
+      #hud .c-tl { left: 40px; top: 40px; border-left-width: 2px; border-top-width: 2px; }
+      #hud .c-tr { right: 40px; top: 40px; border-right-width: 2px; border-top-width: 2px; }
+      #hud .c-bl { left: 40px; bottom: 40px; border-left-width: 2px; border-bottom-width: 2px; }
+      #hud .c-br { right: 40px; bottom: 40px; border-right-width: 2px; border-bottom-width: 2px; }
+      #hud-url { position: absolute; right: 78px; top: 50px; display: flex; align-items: center; gap: 12px; padding: 10px 18px; background: rgba(255, 255, 255, 0.92); border: 2px solid var(--hair); border-radius: 999px; font-size: 20px; font-weight: 500; color: var(--muted); letter-spacing: 0.02em; }
+      #hud-url b { display: block; width: 11px; height: 11px; border-radius: 50%; background: var(--cap); box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.16); }
+      #metro { position: absolute; right: 84px; bottom: 62px; display: flex; gap: 9px; align-items: flex-end; }
+      #metro i { display: block; width: 6px; height: 24px; background: var(--brand); opacity: 0.18; border-radius: 1px; }
+      #hud-bpm { position: absolute; right: 150px; bottom: 60px; font-size: 18px; color: #6b6861; letter-spacing: 0.08em; }
+
+      /* ── shared UI atoms (rebuilt from the dashboard's own components) ── */
+      .ui-card { position: absolute; background: var(--card); border: 2px solid var(--hair); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+      .ui-card img { display: block; width: 100%; height: auto; }
+      .eyebrow { font-family: "Geist Mono", monospace; font-size: 22px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brand-ink); }
+      .scene { position: absolute; inset: 0; }
+
+      /* ── S1 · signal ─────────────────────────────────────────── */
+      #s1-words { position: absolute; inset: 0; }
+      #s1-words .w { position: absolute; left: 0; right: 0; top: 400px; height: 240px; display: flex; align-items: center; justify-content: center; font-size: 200px; font-weight: 500; letter-spacing: -0.05em; line-height: 1; opacity: 0; }
+      #s1-words .w span { display: block; }
+      #s1-words .w em { font-style: normal; color: var(--brand); }
+      #s1-live { position: absolute; left: 0; right: 0; top: 366px; display: flex; justify-content: center; }
+      #s1-live-tag { font-size: 22px; font-weight: 500; letter-spacing: 0.16em; color: #1b7959; }
+      #c-query { left: 96px; top: 118px; width: 640px; padding: 22px 26px; }
+      #c-query .row { display: flex; align-items: center; gap: 14px; font-size: 19px; }
+      #c-query .row + .row { margin-top: 14px; padding-top: 14px; border-top: 2px solid var(--hair); }
+      .pill { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 999px; font-family: "Geist Mono", monospace; font-size: 15px; font-weight: 600; letter-spacing: 0.06em; }
+      .pill-run { background: rgba(31, 138, 101, 0.1); color: #1a7556; }
+      .pill-run i { display: block; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+      .pill-done { background: #f1f0ed; color: var(--muted); }
+      .q { flex: 1; font-family: "Geist Mono", monospace; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .qm { font-family: "Geist Mono", monospace; color: var(--muted); }
+      #c-merge { right: 96px; bottom: 214px; width: 560px; padding: 24px 28px; }
+      #c-merge .t { display: flex; justify-content: space-between; font-family: "Geist Mono", monospace; font-size: 17px; font-weight: 600; letter-spacing: 0.1em; color: var(--muted); }
+      #c-merge .n { margin-top: 12px; font-size: 26px; font-weight: 500; letter-spacing: -0.01em; }
+      #c-merge .track { margin-top: 16px; height: 12px; border-radius: 99px; background: #f1f0ed; overflow: hidden; }
+      #c-merge .fill { width: 100%; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #fb923c, var(--brand)); transform-origin: 0 50%; }
+      #c-disk { right: 96px; top: 104px; width: 540px; }
+      #c-warn { left: 70px; top: 452px; width: 420px; border-color: #fcd9b6; }
+      #c-topo { left: 96px; bottom: 214px; width: 640px; padding: 20px 24px; }
+      #c-topo img { width: 100%; }
+      #c-topo svg { display: block; margin-top: 12px; }
+
+      /* ── S2 · lockup ─────────────────────────────────────────── */
+      #lockup { position: absolute; left: 318px; top: 232px; width: 1300px; height: 300px; transform-origin: 0 0; }
+      #mark { position: absolute; left: 0; top: 0; width: 281.6px; height: 281.6px; }
+      #mark .b { position: absolute; background: var(--bar); transform-origin: 50% 100%; border-radius: 3px 3px 0 0; }
+      #sig { position: absolute; left: 29.04px; top: 85.8px; width: 33.44px; height: 29.04px; background: var(--cap); border-radius: 3px; }
+      #sig-ring { position: absolute; left: 29.04px; top: 85.8px; width: 33.44px; height: 29.04px; border-radius: 50%; border: 3px solid var(--cap); opacity: 0; }
+      #wordmark { position: absolute; left: 300px; top: 44px; height: 240px; overflow: hidden; font-size: 214px; font-weight: 650; letter-spacing: -0.035em; line-height: 240px; white-space: nowrap; }
+      #wordmark span { display: inline-block; }
+      #s2-head { position: absolute; left: 0; right: 0; top: 632px; display: flex; justify-content: center; gap: 22px; font-size: 84px; font-weight: 400; letter-spacing: -0.035em; }
+      #s2-head span { display: block; }
+      #s2-head .ch { color: var(--brand); position: relative; }
+      #s2-uline { position: absolute; left: 4px; right: 4px; bottom: -8px; height: 7px; border-radius: 4px; background: var(--brand); transform-origin: 0 50%; }
+      #shock { position: absolute; left: 960px; top: 540px; width: 2600px; height: 2600px; margin: -1300px 0 0 -1300px; border-radius: 50%; border: 4px solid var(--brand); opacity: 0; }
+
+      /* ── S3 · observe ────────────────────────────────────────── */
+      #s3-copy { position: absolute; left: 112px; top: 282px; width: 600px; }
+      #s3-copy h2 { margin-top: 26px; font-size: 104px; font-weight: 500; letter-spacing: -0.05em; line-height: 1.06; }
+      #s3-copy h2 span { display: block; }
+      #s3-copy h2 em { font-style: normal; color: var(--brand); }
+      #s3-copy p { margin-top: 34px; font-size: 30px; line-height: 1.35; color: var(--muted); letter-spacing: -0.005em; }
+      #s3-stage { position: absolute; left: 700px; top: 0; width: 1300px; height: 1080px; perspective: 2200px; }
+      #s3-grid { position: absolute; left: 0; top: 206px; width: 1296px; height: 660px; transform-style: preserve-3d; transform-origin: 30% 50%; }
+      #s3-grid .ui-card { border-radius: 16px; }
+      #g-storage { left: 0; top: 0; width: 420px; height: 219px; padding: 30px 32px; }
+      #g-storage .lbl { display: flex; align-items: center; gap: 10px; font-family: "Geist Mono", monospace; font-size: 19px; font-weight: 500; letter-spacing: 0.14em; color: var(--muted); }
+      #g-storage .num { margin-top: 18px; font-size: 76px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+      #g-storage .num small { font-size: 60px; }
+      #g-storage .track { margin-top: 22px; height: 16px; border-radius: 99px; background: #f1f0ed; overflow: hidden; }
+      #g-storage .fill { width: 94%; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #f43f5e, #fb7185); transform-origin: 0 50%; }
+      #g-uptime { left: 438px; top: 0; width: 420px; }
+      #g-warn { left: 876px; top: 0; width: 420px; border-color: #fcd9b6; }
+      #g-mem { left: 0; top: 237px; width: 420px; }
+      #g-cpu { left: 438px; top: 237px; width: 420px; }
+      #g-conn { left: 876px; top: 237px; width: 420px; }
+      #g-pill { left: 0; top: -82px; width: 660px; padding: 14px 20px; border-radius: 999px; }
+
+      /* ── S4 · diagnose ───────────────────────────────────────── */
+      #s4-copy { position: absolute; left: 112px; top: 300px; width: 620px; }
+      #s4-tick { position: relative; margin-top: 26px; height: 206px; overflow: hidden; }
+      #s4-tick .it { position: absolute; left: 0; top: 0; font-size: 92px; font-weight: 500; letter-spacing: -0.05em; line-height: 1.08; opacity: 0; }
+      #s4-tick .it span { display: block; }
+      #s4-copy p { margin-top: 28px; font-size: 30px; line-height: 1.35; color: var(--muted); }
+      #s4-idx { margin-top: 40px; display: flex; gap: 10px; }
+      #s4-idx i { display: block; width: 44px; height: 6px; border-radius: 3px; background: var(--hair); }
+      #s4-idx i b { display: block; width: 100%; height: 100%; border-radius: 3px; background: var(--brand); transform-origin: 0 50%; transform: scaleX(0); }
+      #s4-stage { position: absolute; left: 700px; top: 0; width: 1220px; height: 1080px; perspective: 2000px; }
+      .deck { position: absolute; left: 120px; top: 176px; width: 1040px; height: 728px; transform-style: preserve-3d; transform-origin: 0% 50%; }
+      .deck .bar { height: 44px; display: flex; align-items: center; gap: 9px; padding: 0 18px; border-bottom: 2px solid var(--hair); background: #fafaf9; }
+      .deck .bar i { display: block; width: 13px; height: 13px; border-radius: 50%; background: #e2e0da; }
+      .deck .bar span { margin-left: 16px; font-family: "Geist Mono", monospace; font-size: 17px; color: var(--muted); }
+      .deck .shot { width: 100%; height: 684px; overflow: hidden; }
+      .deck .shot img { display: block; width: 112%; height: auto; margin-left: -9%; }
+      #d-dark { background: #0a0a0a; border-color: #232323; }
+      #d-dark .bar { background: #111; border-bottom-color: #232323; }
+      #d-dark .bar i { background: #333; }
+      #d-dark .bar span { color: #9ca3af; }
+      #d-dark video { display: block; width: 100%; height: auto; }
+
+      /* ── S5 · ask ────────────────────────────────────────────── */
+      #s5-win { position: absolute; left: 260px; top: 110px; width: 1400px; height: 919px; transform-origin: 0 0; }
+      #s5-win .bar { height: 44px; display: flex; align-items: center; gap: 9px; padding: 0 18px; border-bottom: 2px solid var(--hair); background: #fafaf9; }
+      #s5-win .bar i { display: block; width: 13px; height: 13px; border-radius: 50%; background: #e2e0da; }
+      #s5-win .bar span { margin-left: 16px; font-family: "Geist Mono", monospace; font-size: 17px; color: var(--muted); }
+      #s5-view { position: relative; width: 1400px; height: 875px; }
+      #s5-view > img { display: block; width: 1400px; height: 875px; }
+      #s5-input { position: absolute; left: 313px; top: 350px; width: 640px; height: 50px; background: #fff; display: flex; align-items: center; font-size: 15px; color: var(--ink); }
+      #s5-caret { display: inline-block; width: 2px; height: 20px; margin-left: 2px; background: var(--brand); }
+      #s5-send { position: absolute; left: 958px; top: 360px; width: 31px; height: 31px; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center; opacity: 0; }
+      #s5-answer { position: absolute; left: 308px; top: 462px; width: 700px; height: 300px; background: #fff; padding: 6px 2px; }
+      #s5-answer .who { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--ink); }
+      #s5-answer .who .spark { color: var(--brand); font-size: 14px; }
+      #s5-answer .who .model { font-family: "Geist Mono", monospace; font-weight: 400; color: #2563eb; font-size: 11.5px; }
+      #s5-tool { margin-top: 10px; display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px; border: 1.5px solid var(--hair); border-radius: 8px; font-family: "Geist Mono", monospace; font-size: 11px; color: var(--muted); }
+      #s5-tool b { display: block; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+      #s5-answer .ln { margin-top: 10px; font-size: 14.5px; line-height: 1.45; color: var(--ink); }
+      #s5-answer .ln code { font-family: "Geist Mono", monospace; font-size: 13px; background: #f1f0ed; border-radius: 4px; padding: 1px 5px; }
+      #s5-answer .ln strong { font-weight: 600; }
+      #s5-answer .ln .hot { color: var(--brand-ink); font-weight: 600; }
+      #s5-label { position: absolute; right: 96px; top: 124px; width: 560px; padding: 28px 32px; }
+      #s5-label h3 { margin-top: 14px; font-size: 58px; font-weight: 500; letter-spacing: -0.04em; line-height: 1.02; }
+      #s5-label p { margin-top: 14px; font-size: 24px; color: var(--muted); }
+
+      /* ── S6 · end ────────────────────────────────────────────── */
+      #wipe { position: absolute; inset: 0; display: flex; }
+      #wipe i { display: block; flex: 1; height: 100%; background: var(--bar); transform-origin: 50% 100%; margin-right: -1px; }
+      #wipe i:nth-child(3n + 1) { background: #fb8a3c; }
+      #wipe i:nth-child(4n + 2) { background: var(--brand); }
+      #s6-head { position: absolute; left: 0; right: 0; top: 560px; display: flex; justify-content: center; gap: 18px; font-size: 68px; font-weight: 400; letter-spacing: -0.035em; }
+      #s6-head span { display: block; }
+      #s6-head .ch { color: var(--brand); }
+      #s6-chips { position: absolute; left: 0; right: 0; top: 700px; display: flex; justify-content: center; gap: 18px; }
+      .chip { display: flex; align-items: center; gap: 12px; padding: 16px 26px; background: var(--card); border: 2px solid var(--hair); border-radius: 999px; box-shadow: var(--shadow); font-size: 28px; font-weight: 500; letter-spacing: -0.01em; }
+      .chip .dot { display: block; width: 11px; height: 11px; border-radius: 50%; background: var(--cap); }
+      .chip .star { color: #b07c00; }
+      #s6-cta { position: absolute; left: 0; right: 0; top: 832px; display: flex; justify-content: center; }
+      #s6-btn { display: flex; align-items: center; gap: 16px; padding: 22px 40px; border-radius: 16px; background: var(--ink); color: #fff; font-family: "Geist Mono", monospace; font-size: 32px; font-weight: 500; letter-spacing: 0.01em; box-shadow: 0 24px 50px -18px rgba(38, 37, 30, 0.55); }
+      #s6-btn .arr { color: #fb923c; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="18" data-width="1920" data-height="1080">
+      <!-- ░░ background ░░ -->
+      <div id="bg" class="layer">
+        <div id="bg-dots" class="layer"></div>
+        <div id="bg-dots-mask"></div>
+        <svg id="bg-skyline" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <pattern id="sky" width="88" height="140" patternUnits="userSpaceOnUse">
+              <g fill="currentColor">
+                <rect x="6" y="112" width="8" height="28" /><rect x="20" y="44" width="8" height="96" /><rect x="34" y="88" width="8" height="52" />
+                <rect x="48" y="24" width="8" height="116" /><rect x="62" y="72" width="8" height="68" /><rect x="76" y="100" width="8" height="40" />
+              </g>
+            </pattern>
+            <radialGradient id="sky-fade" cx="50%" cy="46%" r="70%">
+              <stop offset="0%" stop-color="black" /><stop offset="58%" stop-color="black" /><stop offset="100%" stop-color="white" />
+            </radialGradient>
+            <mask id="sky-mask"><rect width="100%" height="100%" fill="url(#sky-fade)" /></mask>
+          </defs>
+          <rect id="sky-rect" width="1920" height="1080" fill="url(#sky)" mask="url(#sky-mask)" opacity="0.07" />
+        </svg>
+        <div id="bg-wash"></div>
+        <div id="bg-wash2"></div>
+      </div>
+
+      <div id="eq"></div>
+
+      <!-- ░░ world (beat kick lives here) ░░ -->
+      <div id="world" class="layer">
+        <!-- S1 · SIGNAL -->
+        <div id="s1" class="scene">
+          <div id="s1-live"><div id="s1-live-tag" class="mono">LIVE · SYSTEM TABLES</div></div>
+          <div id="s1-words">
+            <div class="w" id="w1"><span data-layout-allow-overlap>Queries<em data-layout-allow-overlap>.</em></span></div>
+            <div class="w" id="w2"><span data-layout-allow-overlap>Merges<em data-layout-allow-overlap>.</em></span></div>
+            <div class="w" id="w3"><span data-layout-allow-overlap>Parts<em data-layout-allow-overlap>.</em></span></div>
+            <div class="w" id="w4"><span data-layout-allow-overlap>Replicas<em data-layout-allow-overlap>.</em></span></div>
+            <div class="w" id="w5"><span data-layout-allow-overlap>Health<em data-layout-allow-overlap>.</em></span></div>
+          </div>
+          <div class="ui-card" id="c-query">
+            <div class="row"><span class="pill pill-run"><i></i>RUNNING</span><span class="q">SELECT q.* FROM system.processes</span><span class="qm">2.37 MB</span></div>
+            <div class="row"><span class="pill pill-done">DONE</span><span class="q">SELECT version(), uptime()</span><span class="qm">8.33 MB</span></div>
+          </div>
+          <div class="ui-card" id="c-merge">
+            <div class="t"><span>MERGE · system.metric_log</span><span>68%</span></div>
+            <div class="n">3 parts → 1 part</div>
+            <div class="track"><div class="fill" id="c-merge-fill"></div></div>
+          </div>
+          <div class="ui-card" id="c-disk"><img src="assets/ui/card-disk.png" alt="" /></div>
+          <div class="ui-card" id="c-warn"><img src="assets/ui/card-disk-warning.png" alt="" /></div>
+          <div class="ui-card" id="c-topo">
+            <img src="assets/ui/pill-online.png" alt="" />
+            <svg width="592" height="92" viewBox="0 0 592 92" aria-hidden="true">
+              <path id="topo-l1" d="M70 46 H296" stroke="#cfcdc4" stroke-width="3" fill="none" stroke-dasharray="226" stroke-dashoffset="226" />
+              <path id="topo-l2" d="M296 46 H522" stroke="#cfcdc4" stroke-width="3" fill="none" stroke-dasharray="226" stroke-dashoffset="226" />
+              <g font-family="Geist Mono, monospace" font-size="15" fill="#5a5852" text-anchor="middle">
+                <circle cx="70" cy="30" r="13" fill="#fff" stroke="#10b981" stroke-width="3" /><text x="70" y="72">replica-0</text>
+                <circle cx="296" cy="30" r="13" fill="#fff" stroke="#f97316" stroke-width="3" /><text x="296" y="72">keeper</text>
+                <circle cx="522" cy="30" r="13" fill="#fff" stroke="#10b981" stroke-width="3" /><text x="522" y="72">replica-1</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- S3 · OBSERVE -->
+        <div id="s3" class="scene" style="opacity: 0">
+          <div id="s3-copy">
+            <div class="eyebrow" id="s3-eb">01 · Observe</div>
+            <h2 id="s3-h"><span id="s3-h1">Your cluster,</span><span id="s3-h2"><em>live.</em></span></h2>
+            <p id="s3-p">Queries, merges, parts, replication and disk — straight from system tables.</p>
+          </div>
+          <div id="s3-stage" data-layout-allow-overflow>
+            <div id="s3-grid">
+              <div class="ui-card" id="g-pill"><img src="assets/ui/pill-online-grid.png" alt="" /></div>
+              <div class="ui-card" id="g-storage">
+                <div class="lbl">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12H2" /><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" /><path d="M6 16h.01" /><path d="M10 16h.01" /></svg>
+                  STORAGE
+                </div>
+                <div class="num"><span id="g-storage-n">0</span> <small>GiB</small></div>
+                <div class="track"><div class="fill" id="g-storage-fill"></div></div>
+              </div>
+              <div class="ui-card" id="g-uptime"><img src="assets/ui/card-uptime.png" alt="" /></div>
+              <div class="ui-card" id="g-warn"><img src="assets/ui/card-disk-warning-grid.png" alt="" /></div>
+              <div class="ui-card" id="g-mem"><img src="assets/ui/chart-memory.png" alt="" /></div>
+              <div class="ui-card" id="g-cpu"><img src="assets/ui/chart-cpu.png" alt="" /></div>
+              <div class="ui-card" id="g-conn"><img src="assets/ui/chart-conn.png" alt="" /></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- S4 · DIAGNOSE -->
+        <div id="s4" class="scene" style="opacity: 0">
+          <div id="s4-copy">
+            <div class="eyebrow">02 · Diagnose</div>
+            <div id="s4-tick">
+              <div class="it" id="t1"><span data-layout-allow-overlap>Running</span><span data-layout-allow-overlap>queries</span></div>
+              <div class="it" id="t2"><span data-layout-allow-overlap>Cluster</span><span data-layout-allow-overlap>topology</span></div>
+              <div class="it" id="t3"><span data-layout-allow-overlap>EXPLAIN</span><span data-layout-allow-overlap>plans</span></div>
+              <div class="it" id="t4"><span data-layout-allow-overlap>Light</span><span data-layout-allow-overlap>&amp; dark</span></div>
+            </div>
+            <p>Drill from a spike to the query behind it.</p>
+            <div id="s4-idx"><i><b id="ix1"></b></i><i><b id="ix2"></b></i><i><b id="ix3"></b></i><i><b id="ix4"></b></i></div>
+          </div>
+          <div id="s4-stage" data-layout-allow-overflow>
+            <div class="ui-card deck" id="d1"><div class="bar"><i></i><i></i><i></i><span data-layout-allow-overlap>dash.chmonitor.dev/running-queries</span></div><div class="shot"><img src="assets/ui/running-queries-light.png" alt="" /></div></div>
+            <div class="ui-card deck" id="d2"><div class="bar"><i></i><i></i><i></i><span data-layout-allow-overlap>dash.chmonitor.dev/cluster</span></div><div class="shot"><img src="assets/ui/cluster-topology-light.png" alt="" /></div></div>
+            <div class="ui-card deck" id="d3"><div class="bar"><i></i><i></i><i></i><span data-layout-allow-overlap>dash.chmonitor.dev/explain</span></div><div class="shot"><img src="assets/ui/explain-light.png" alt="" /></div></div>
+            <div class="ui-card deck" id="d-dark">
+              <div class="bar"><i></i><i></i><i></i><span data-layout-allow-overlap>dash.chmonitor.dev/insights</span></div>
+              <div class="shot"><video id="dark-clip" class="clip" src="assets/video/dark-insights.mp4" data-start="11.4" data-duration="1.2" data-track-index="3" muted playsinline></video></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- S5 · ASK -->
+        <div id="s5" class="scene" style="opacity: 0">
+          <div class="ui-card" id="s5-win" data-layout-allow-overflow>
+            <div class="bar"><i></i><i></i><i></i><span>dash.chmonitor.dev/ai-chat</span></div>
+            <div id="s5-view">
+              <img src="assets/ui/app-ai-chat.png" alt="" />
+              <div id="s5-input"><span id="s5-typed"></span><span id="s5-caret"></span></div>
+              <div id="s5-send"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg></div>
+              <div id="s5-answer">
+                <div class="who"><span class="spark">✦</span>AI Agent <span class="model">openrouter:openrouter/free</span></div>
+                <div id="s5-tool"><b></b>ran query · system.disks, system.parts</div>
+                <div class="ln" id="a1">Disk <code>default</code> is <span class="hot">93.7% full</span> — 427.5 GiB of 456.3 GiB, 28.8 GiB free.</div>
+                <div class="ln" id="a2">The heaviest tables are system logs: <code>metric_log</code> and <code>part_log</code>.</div>
+                <div class="ln" id="a3"><strong>Fix:</strong> add a TTL to <code>system.metric_log</code> and drop old partitions.</div>
+              </div>
+            </div>
+          </div>
+          <div class="ui-card" id="s5-label">
+            <div class="eyebrow">03 · Ask</div>
+            <h3>An AI advisor on top.</h3>
+            <p>Read-only by default. MCP-ready.</p>
+          </div>
+        </div>
+
+        <!-- S6 · END -->
+        <div id="s6" class="scene" style="opacity: 0">
+          <div id="s6-head"><span>The</span><span>ops</span><span>dashboard</span><span>for</span><span class="ch">ClickHouse.</span></div>
+          <div id="s6-chips">
+            <div class="chip" id="ch1"><span class="dot"></span>Open source</div>
+            <div class="chip" id="ch2"><span class="dot"></span>Self-host free</div>
+            <div class="chip" id="ch3"><span class="dot"></span>MCP-ready</div>
+            <div class="chip" id="ch4"><span class="star">★</span>297 on GitHub</div>
+          </div>
+          <div id="s6-cta"><div id="s6-btn">chmonitor.dev <span class="arr">→</span></div></div>
+        </div>
+
+        <!-- S2 · LOCKUP (lives on top: docks into the corner, then returns for the end card) -->
+        <div id="s2" class="scene">
+          <div id="lockup">
+            <div id="mark">
+              <div class="b" id="b1" style="left: 29.04px; top: 114.84px; width: 33.44px; height: 135.96px"></div>
+              <div class="b" id="b2" style="left: 76.56px; top: 30.8px; width: 33.44px; height: 220px"></div>
+              <div class="b" id="b3" style="left: 124.08px; top: 116.6px; width: 33.44px; height: 134.2px"></div>
+              <div class="b" id="b4" style="left: 171.6px; top: 55px; width: 33.44px; height: 195.8px"></div>
+              <div class="b" id="b5" style="left: 219.12px; top: 147.84px; width: 33.44px; height: 102.96px"></div>
+              <div id="sig-ring"></div>
+              <div id="sig"></div>
+            </div>
+            <div id="wordmark"><span data-layout-allow-overlap>c</span><span data-layout-allow-overlap>h</span><span data-layout-allow-overlap>m</span><span data-layout-allow-overlap>o</span><span data-layout-allow-overlap>n</span><span data-layout-allow-overlap>i</span><span data-layout-allow-overlap>t</span><span data-layout-allow-overlap>o</span><span data-layout-allow-overlap>r</span></div>
+          </div>
+          <div id="s2-head"><span>The</span><span>ops</span><span>dashboard</span><span>for</span><span class="ch">ClickHouse.<i id="s2-uline"></i></span></div>
+          <div id="shock"></div>
+        </div>
+      </div>
+
+      <!-- ░░ HUD ░░ -->
+      <div id="hud" class="layer">
+        <div class="corner c-tl"></div><div class="corner c-tr"></div><div class="corner c-bl"></div><div class="corner c-br"></div>
+        <div id="hud-url" class="mono"><b></b>dash.chmonitor.dev</div>
+        <div id="hud-bpm" class="mono">160 BPM</div>
+        <div id="metro"><i></i><i></i><i></i><i></i></div>
+      </div>
+
+      <div id="wipe"></div>
+      <div id="grain"></div>
+
+      <audio id="bgm" src="assets/audio/bgm.mp3" data-start="0" data-duration="18" data-track-index="6"></audio>
+    </div>
+
+    <script>
+      // ─────────────────────────────────────────────────────────────
+      // One tempo grid drives everything. 160 BPM → 0.375s per beat,
+      // 3s phrases. BEATS are the detected onsets (hyperframes beats),
+      // shifted so the drop lands on t = 3.0.
+      // ─────────────────────────────────────────────────────────────
+      const B = 0.375;
+      const BEATS = [
+        [0, 0.54], [0.375, 0.16], [1.875, 0.31], [2.625, 0.34],
+        [3, 1], [3.375, 0.63], [3.75, 0.17], [4.875, 0.86], [5.25, 0.15], [5.625, 0.41],
+        [6, 0.99], [6.375, 0.64], [6.75, 0.17], [7.5, 0.62], [7.875, 0.78], [8.25, 0.15], [8.625, 0.62],
+        [9, 0.97], [9.375, 0.63], [9.75, 0.18], [10.875, 0.61], [11.25, 0.15], [11.625, 0.42],
+        [12, 0.95], [12.375, 0.63], [12.75, 0.16], [13.875, 0.62], [14.25, 0.15],
+        [15, 0.91], [15.375, 0.51], [15.75, 0.42], [16.875, 0.81], [17.25, 0.41], [17.625, 0.16],
+      ];
+      const DUR = 18;
+
+      // deterministic pseudo-random (index-derived, never Math.random)
+      const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+
+      // beat envelope: sum of decaying kicks — a pure function of time
+      function envAt(t) {
+        let e = 0;
+        for (let k = 0; k < BEATS.length; k++) {
+          const d = t - BEATS[k][0];
+          if (d < 0) break;
+          if (d < 0.9) e += BEATS[k][1] * Math.exp(-d / 0.16);
+        }
+        return Math.min(1.2, e);
+      }
+
+      // build equalizer + wipe bars
+      const eq = document.getElementById("eq");
+      const EQ_N = 72;
+      for (let i = 0; i < EQ_N; i++) eq.appendChild(document.createElement("i"));
+      const eqBars = Array.from(eq.children);
+      const wipe = document.getElementById("wipe");
+      const WIPE_N = 24;
+      for (let i = 0; i < WIPE_N; i++) wipe.appendChild(document.createElement("i"));
+      const wipeBars = Array.from(wipe.children);
+      const metro = Array.from(document.querySelectorAll("#metro i"));
+      const world = document.getElementById("world");
+
+      const tl = gsap.timeline({ paused: true });
+
+      // ── music-reactive layer (one proxy tween, state = f(time)) ──
+      const clock = { t: 0 };
+      function drive() {
+        const t = clock.t;
+        const e = envAt(t);
+        const post = t >= 3 ? 1 : 0.38 + 0.2 * (t / 3);
+        const tail = t > 16.9 ? Math.max(0.25, 1 - (t - 16.9) / 1.1) : 1;
+        for (let i = 0; i < EQ_N; i++) {
+          const base = 0.18 + 0.55 * hash(i);
+          const wave = 0.55 + 0.45 * Math.sin(i * 0.55 + t * 5.2 + hash(i + 9) * 6.28);
+          const s = post * tail * base * (0.3 + 0.9 * e * (0.45 + 0.55 * hash(i + Math.floor(t / B) * 7))) * wave;
+          eqBars[i].style.transform = `scaleY(${Math.max(0.03, Math.min(1, s)).toFixed(4)})`;
+        }
+        // camera kick on strong hits after the drop
+        let kick = 0;
+        for (let k = 0; k < BEATS.length; k++) {
+          const [bt, st] = BEATS[k];
+          if (bt < 3 || st < 0.75) continue;
+          const d = t - bt;
+          if (d >= 0 && d < 0.5) kick = Math.max(kick, st * Math.exp(-d / 0.09));
+        }
+        world.style.transform = `scale(${(1 + 0.012 * kick).toFixed(5)})`;
+        // metronome: tick i lights on beat index i (mod 4)
+        const bi = Math.floor(t / B + 1e-6);
+        const phase = t - bi * B;
+        for (let i = 0; i < 4; i++) {
+          const on = bi % 4 === i ? Math.max(0, 1 - phase / 0.3) : 0;
+          metro[i].style.opacity = (0.18 + 0.82 * on * (0.6 + 0.4 * e)).toFixed(3);
+          metro[i].style.transform = `scaleY(${(1 + 0.6 * on).toFixed(3)})`;
+        }
+        document.getElementById("bg-wash").style.opacity = (0.75 + 0.35 * Math.min(1, e)).toFixed(3);
+      }
+      tl.to(clock, { t: DUR, duration: DUR, ease: "none", onUpdate: drive }, 0);
+      drive();
+
+      // ambient background drift
+      tl.fromTo("#bg-dots", { backgroundPosition: "0px 0px" }, { backgroundPosition: "0px -68px", duration: DUR, ease: "none" }, 0);
+      tl.fromTo("#bg-wash", { x: -80 }, { x: 120, duration: DUR, ease: "sine.inOut" }, 0);
+      tl.fromTo("#bg-wash2", { x: 60, y: 30 }, { x: -140, y: -40, duration: DUR, ease: "sine.inOut" }, 0);
+      tl.fromTo("#grain", { x: 0, y: 0 }, { x: -30, y: 18, duration: DUR, ease: "steps(48)" }, 0);
+      tl.fromTo("#hud .corner", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.1);
+      tl.fromTo("#hud-url", { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 3.2);
+      tl.fromTo("#hud-bpm", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0.2);
+
+      // ════════ S1 · SIGNAL (0 – 3.0) ════════
+      // The emerald live-dot (it becomes the logo's cap at the drop).
+      const SIG_S1 = { x: 584, y: 0, scaleX: 0.87, borderRadius: "50%" };
+      tl.fromTo("#sig", { ...SIG_S1, scale: 0 }, { ...SIG_S1, scale: 1, duration: 0.4, ease: "back.out(3)" }, 0);
+      [0, 0.75, 1.5, 2.25].forEach((t0) => {
+        tl.fromTo("#sig-ring", { x: 584, opacity: 0.9, scale: 1 }, { x: 584, opacity: 0, scale: 3.6, duration: 0.7, ease: "power2.out", immediateRender: false }, t0);
+      });
+      tl.fromTo("#s1-live-tag", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 0.1);
+
+      // words — one onset array, a different entrance per word
+      const W = [0, 0.75, 1.125, 1.5, 1.875];
+      tl.fromTo("#w1", { opacity: 0, scale: 1.35, filter: "blur(18px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.34, ease: "power4.out" }, W[0]);
+      tl.set("#w1", { opacity: 0 }, W[1]);
+      tl.fromTo("#w2", { opacity: 0, x: 340 }, { opacity: 1, x: 0, duration: 0.3, ease: "expo.out" }, W[1]);
+      tl.set("#w2", { opacity: 0 }, W[2]);
+      tl.fromTo("#w3", { opacity: 0, y: 110, rotation: 5 }, { opacity: 1, y: 0, rotation: 0, duration: 0.3, ease: "circ.out" }, W[2]);
+      tl.set("#w3", { opacity: 0 }, W[3]);
+      tl.fromTo("#w4", { opacity: 0, y: -120 }, { opacity: 1, y: 0, duration: 0.3, ease: "expo.out" }, W[3]);
+      tl.set("#w4", { opacity: 0 }, W[4]);
+      tl.fromTo("#w5", { opacity: 0, scale: 0.55 }, { opacity: 1, scale: 1, duration: 0.36, ease: "back.out(2.2)" }, W[4]);
+
+      // companion UI cards — each word brings its real component
+      const CARDS = [
+        ["#c-query", W[0] + 0.06, { x: -60, y: -40, rotation: -5 }, -2.5],
+        ["#c-merge", W[1] + 0.04, { x: 80, y: 40, rotation: 6 }, 2],
+        ["#c-disk", W[2] + 0.04, { x: 70, y: -50, rotation: 5 }, 2.5],
+        ["#c-topo", W[3] + 0.04, { x: -70, y: 60, rotation: -6 }, -2],
+        ["#c-warn", W[4] + 0.04, { x: -90, y: 0, rotation: -7 }, -3],
+      ];
+      CARDS.forEach(([sel, t0, from, rest]) => {
+        tl.fromTo(sel, { opacity: 0, scale: 0.6, ...from }, { opacity: 1, scale: 1, x: 0, y: 0, rotation: rest, duration: 0.5, ease: "back.out(1.7)" }, t0);
+        tl.to(sel, { y: -14, duration: 1.1, ease: "sine.inOut" }, t0 + 0.5);
+      });
+      tl.fromTo("#c-merge-fill", { scaleX: 0 }, { scaleX: 0.68, duration: 1.2, ease: "power2.out" }, W[1] + 0.2);
+      tl.to("#topo-l1", { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, W[3] + 0.2);
+      tl.to("#topo-l2", { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, W[3] + 0.4);
+
+      // implosion: everything is sucked into the signal dot (2.625 → 3.0)
+      const IMP = 2.625;
+      const PULL = { "#c-query": [544, 340], "#c-merge": [-560, -230], "#c-disk": [-520, 330], "#c-topo": [520, -250], "#c-warn": [680, 0] };
+      Object.entries(PULL).forEach(([sel, [dx, dy]]) => {
+        tl.to(sel, { x: dx, y: dy, scale: 0.08, rotation: 0, opacity: 0, duration: B, ease: "power3.in" }, IMP);
+      });
+      tl.to("#w5", { scale: 0.05, opacity: 0, y: -80, duration: B, ease: "power3.in" }, IMP);
+      tl.to("#s1-live-tag", { opacity: 0, duration: 0.2 }, IMP);
+      // the dot travels to the cap slot of the logo
+      tl.to("#sig", { x: 0, y: 136, scaleX: 1, borderRadius: "3px", duration: B, ease: "power3.inOut" }, IMP);
+
+      // ════════ S2 · DROP → LOCKUP (3.0 – 6.0) ════════
+      const DROP = 3;
+      tl.fromTo("#shock", { opacity: 0.9, scale: 0.004 }, { opacity: 0, scale: 1, duration: 1.0, ease: "expo.out" }, DROP);
+      ["#b1", "#b2", "#b3", "#b4", "#b5"].forEach((b, i) => {
+        tl.fromTo(b, { scaleY: 0 }, { scaleY: 1, duration: 0.55, ease: "back.out(2.4)" }, DROP + i * 0.045);
+      });
+      // the cap rides the first bar up — a tiny bounce as it lands
+      tl.fromTo("#sig", { y: 136 }, { y: 0, duration: 0.62, ease: "back.out(2.6)", immediateRender: false }, DROP + 0.02);
+      tl.fromTo("#wordmark span", { yPercent: 105 }, { yPercent: 0, duration: 0.55, ease: "expo.out", stagger: 0.028 }, DROP + 0.375);
+      tl.fromTo("#s2-head span", { opacity: 0, y: 60, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out", stagger: 0.07 }, 4.125);
+      tl.fromTo("#s2-uline", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out" }, 4.875);
+      tl.set("#lockup", { x: 0, y: 0, scale: 1 }, 0);
+      tl.fromTo("#lockup", { scale: 1 }, { scale: 1.025, duration: 1.6, ease: "sine.inOut" }, DROP + 0.7);
+
+      // dock: the lockup flies into the top-left corner and stays as the HUD brand
+      const DOCK = 5.625;
+      tl.to("#lockup", { x: -236, y: -176, scale: 0.16, duration: 0.6, ease: "expo.inOut" }, DOCK);
+      tl.to("#s2-head span", { y: -90, opacity: 0, filter: "blur(8px)", duration: 0.26, ease: "power3.in", stagger: 0.015 }, DOCK);
+
+      // ════════ S3 · OBSERVE (6.0 – 9.0) ════════
+      const S3 = 6;
+      tl.set("#s3", { opacity: 1 }, S3 - 0.1);
+      tl.fromTo("#s3-eb", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, S3);
+      tl.fromTo("#s3-h1", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, S3 + 0.06);
+      tl.fromTo("#s3-h2", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, S3 + 0.375);
+      tl.fromTo("#s3-p", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, S3 + 0.75);
+      // camera: tilted 3D grid slowly flattens (tilt-to-flatten)
+      tl.fromTo("#s3-grid", { rotationY: -26, rotationX: 14, rotationZ: -3, z: -200 }, { rotationY: -12, rotationX: 6, rotationZ: 0, z: 0, duration: 3.2, ease: "power2.out" }, S3 - 0.1);
+      // cards fly in from depth, on the beat
+      const G = [
+        ["#g-cpu", S3], ["#g-mem", S3 + 0.375], ["#g-conn", S3 + 0.44],
+        ["#g-storage", 7.5], ["#g-uptime", 7.875], ["#g-warn", 7.94], ["#g-pill", 8.625],
+      ];
+      G.forEach(([sel, t0], i) => {
+        tl.fromTo(sel, { opacity: 0, z: 700, y: 60 + 20 * hash(i), rotationX: -24, filter: "blur(14px)" }, { opacity: 1, z: 0, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, t0);
+      });
+      const store = { v: 0 };
+      tl.fromTo(store, { v: 0 }, { v: 428, duration: 0.9, ease: "power3.out", onUpdate: () => { document.getElementById("g-storage-n").textContent = Math.round(store.v); } }, 7.55);
+      tl.fromTo("#g-storage-fill", { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "power3.out" }, 7.55);
+
+      // whip-pan out (lands on the 9.0 downbeat)
+      const S4 = 9;
+      tl.to("#s3", { x: -1400, filter: "blur(22px)", duration: 0.42, ease: "power3.in" }, S4 - 0.3);
+      tl.set("#s3", { opacity: 0 }, S4 + 0.12);
+
+      // ════════ S4 · DIAGNOSE (9.0 – 12.0) ════════
+      tl.set("#s4", { opacity: 1 }, S4 - 0.12);
+      tl.fromTo("#s4", { x: 1400, filter: "blur(22px)" }, { x: 0, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, S4 - 0.12);
+      const D = [["#d1", "#t1", "#ix1", S4], ["#d2", "#t2", "#ix2", 9.75], ["#d3", "#t3", "#ix3", 10.875], ["#d-dark", "#t4", "#ix4", 11.625]];
+      D.forEach(([card, word, ix, t0], k) => {
+        const spin = card === "#d-dark";
+        tl.fromTo(card,
+          { opacity: 0, x: 560, rotationY: spin ? -200 : -42, rotationZ: 4, z: 120 },
+          { opacity: 1, x: 0, rotationY: -10, rotationZ: 0, z: 0, duration: spin ? 0.62 : 0.52, ease: "expo.out" }, t0);
+        // push the previous cards back into the stack
+        for (let j = 0; j < k; j++) {
+          const depth = k - j;
+          tl.to(D[j][0], { x: -70 * depth, z: -150 * depth, rotationY: -10 - 3 * depth, opacity: Math.max(0, 1 - 0.28 * depth), duration: 0.5, ease: "expo.out" }, t0);
+        }
+        // headline ticker swaps on the same onset
+        tl.fromTo(word, { opacity: 0, yPercent: 105 }, { opacity: 1, yPercent: 0, duration: 0.42, ease: "expo.out" }, t0 + 0.06);
+        if (k > 0) tl.to(D[k - 1][1], { opacity: 0, yPercent: -105, duration: 0.2, ease: "power3.in" }, t0 - 0.12);
+        tl.to(ix, { scaleX: 1, duration: 0.35, ease: "power2.out" }, t0);
+      });
+      tl.fromTo("#d1 .shot img", { y: 0 }, { y: -40, duration: 3, ease: "none" }, S4);
+
+      // zoom-through into the AI agent
+      const S5 = 12;
+      tl.to("#s4", { scale: 1.7, opacity: 0, filter: "blur(16px)", duration: 0.42, ease: "power3.in" }, S5 - 0.25);
+
+      // ════════ S5 · ASK (12.0 – 15.0) ════════
+      tl.to("#lockup", { opacity: 0, duration: 0.25, ease: "power2.out" }, 12.3);
+      tl.set("#lockup", { opacity: 1 }, 15);
+      tl.set("#s5", { opacity: 1 }, S5 - 0.18);
+      tl.fromTo("#s5-win", { opacity: 0, scale: 0.82, x: 126, y: 83, rotationX: 10, filter: "blur(14px)" }, { opacity: 1, scale: 1, x: 0, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, S5 - 0.18);
+      // camera pushes to the prompt box
+      tl.to("#s5-win", { scale: 1.7, x: -418.6, y: -282.3, duration: 0.55, ease: "expo.inOut" }, 12.375);
+      const Q = "Why is disk usage at 93.7%?";
+      const typed = document.getElementById("s5-typed");
+      const ty = { n: 0 };
+      tl.fromTo(ty, { n: 0 }, { n: Q.length, duration: 0.72, ease: "none", onUpdate: () => { typed.textContent = Q.slice(0, Math.round(ty.n)); } }, 12.6);
+      tl.fromTo("#s5-caret", { opacity: 1 }, { opacity: 0, duration: 0.1, repeat: 5, yoyo: true, ease: "steps(1)" }, 13.35);
+      // send — press & release spring on the beat
+      tl.fromTo("#s5-send", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(3)" }, 13.2);
+      tl.to("#s5-send", { scale: 0.78, duration: 0.08, ease: "power2.in" }, 13.44);
+      tl.to("#s5-send", { scale: 1, duration: 0.4, ease: "elastic.out(1, 0.4)" }, 13.52);
+      // pull back to frame question + answer
+      tl.to("#s5-win", { scale: 1.45, x: -254.1, y: -416.8, duration: 0.6, ease: "expo.inOut" }, 13.5);
+      tl.fromTo("#s5-answer", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 13.55);
+      tl.fromTo("#s5-answer .who", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, 13.6);
+      tl.fromTo("#s5-tool", { opacity: 0, x: -12 }, { opacity: 1, x: 0, duration: 0.3, ease: "power3.out" }, 13.7);
+      [["#a1", 13.875], ["#a2", 14.25], ["#a3", 14.5]].forEach(([s, t0]) => {
+        tl.fromTo(s, { opacity: 0, y: 14, clipPath: "inset(0 100% 0 0)" }, { opacity: 1, y: 0, clipPath: "inset(0 0% 0 0)", duration: 0.34, ease: "power2.out" }, t0);
+      });
+      tl.fromTo("#s5-label", { opacity: 0, y: -50, rotation: 2 }, { opacity: 1, y: 0, rotation: 1, duration: 0.5, ease: "back.out(1.6)" }, 12.375);
+
+      // ════════ S6 · END (15.0 – 18.0) ════════
+      const S6 = 15;
+      // equalizer surge wipe — bars rise to cover, then fall away
+      wipeBars.forEach((bar, i) => {
+        const c = Math.abs(i - (WIPE_N - 1) / 2) / (WIPE_N / 2);
+        tl.fromTo(bar, { scaleY: 0 }, { scaleY: 1, duration: 0.34, ease: "power3.in" }, S6 - 0.4 + c * 0.1 + 0.05 * hash(i));
+        tl.to(bar, { scaleY: 0, transformOrigin: "50% 0%", duration: 0.5, ease: "expo.inOut" }, S6 + 0.02 + (1 - c) * 0.12 + 0.04 * hash(i + 3));
+      });
+      tl.set("#s5", { opacity: 0 }, S6);
+      tl.set(["#hud-url", "#hud-bpm"], { opacity: 0 }, S6);
+      tl.set("#s6", { opacity: 1 }, S6);
+      tl.set("#lockup", { x: 170, y: 20, scale: 0.74 }, S6);
+      tl.fromTo("#lockup", { x: 170, y: 20, scale: 0.74 }, { scale: 0.76, x: 155, y: 16, duration: 3, ease: "sine.out", immediateRender: false }, S6);
+      tl.fromTo("#s6-head span", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.05 }, S6 + 0.3);
+      [["#ch1", 15.375], ["#ch2", 15.5], ["#ch3", 15.625], ["#ch4", 15.75]].forEach(([s, t0]) => {
+        tl.fromTo(s, { opacity: 0, scale: 0.6, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "back.out(2)" }, t0);
+      });
+      tl.fromTo("#s6-btn", { opacity: 0, y: 40, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "expo.out" }, 16.375);
+      tl.to("#s6-btn", { scale: 0.94, duration: 0.08, ease: "power2.in" }, 16.875);
+      tl.to("#s6-btn", { scale: 1, duration: 0.5, ease: "elastic.out(1, 0.45)" }, 16.955);
+      tl.to("#s6-chips", { y: -6, duration: 1.2, ease: "sine.inOut" }, 16.4);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

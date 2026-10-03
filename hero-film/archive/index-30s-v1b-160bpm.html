@@ -1,0 +1,1010 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Geist"; font-weight: 400 700; src: url("assets/fonts/geist-latin.woff2") format("woff2"); }
+      @font-face { font-family: "Geist Mono"; font-weight: 400; src: url("assets/fonts/geist-mono-latin-400.woff2") format("woff2"); }
+      @font-face { font-family: "Geist Mono"; font-weight: 500; src: url("assets/fonts/geist-mono-latin-500.woff2") format("woff2"); }
+      @font-face { font-family: "Geist Mono"; font-weight: 600; src: url("assets/fonts/geist-mono-latin-600.woff2") format("woff2"); }
+
+      :root {
+        --paper: #fbfaf8;
+        --card: #ffffff;
+        --ink: #26251e;
+        --muted: #5a5852;
+        --soft: #a09c92;
+        --hair: #e7e6e2;
+        --hair-strong: #cfcdc4;
+        --brand: #f54e00;
+        --brand-ink: #b03800;
+        --bar: #f97316;
+        --cap: #10b981;
+        --ok: #1f8a65;
+        --shadow: 0 1px 0 rgba(38, 37, 30, 0.04), 0 18px 40px -14px rgba(38, 37, 30, 0.22), 0 40px 90px -30px rgba(38, 37, 30, 0.18);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--paper); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--paper); font-family: "Geist", ui-sans-serif, system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+      .layer { position: absolute; inset: 0; }
+      .mono { font-family: "Geist Mono", ui-monospace, monospace; }
+
+      /* ── background ─────────────────────────────────────────── */
+      #bg-dots { background-image: radial-gradient(rgba(38, 37, 30, 0.13) 1.3px, transparent 1.6px); background-size: 34px 34px; background-position: 0 0; }
+      #bg-dots-mask { position: absolute; inset: 0; background: radial-gradient(ellipse 62% 58% at 50% 48%, var(--paper) 0%, rgba(251, 250, 248, 0.86) 45%, rgba(251, 250, 248, 0) 100%); }
+      #bg-wash { position: absolute; left: 260px; top: -520px; width: 1400px; height: 900px; border-radius: 50%; background: radial-gradient(closest-side, rgba(245, 78, 0, 0.16), rgba(245, 78, 0, 0.05) 55%, rgba(245, 78, 0, 0) 100%); }
+      #bg-wash2 { position: absolute; left: 1180px; top: 640px; width: 1100px; height: 800px; border-radius: 50%; background: radial-gradient(closest-side, rgba(16, 185, 129, 0.09), rgba(16, 185, 129, 0) 100%); }
+      #bg-skyline { position: absolute; inset: 0; color: var(--brand); }
+      #grain { position: absolute; inset: -40px; opacity: 0.07; mix-blend-mode: multiply; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.15 0 0 0 0 0.14 0 0 0 0 0.12 0 0 0 1.1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+      /* equalizer skyline — the music made visible */
+      #eq { position: absolute; left: 0; right: 0; bottom: 0; height: 190px; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 12px; }
+      #eq i { display: block; width: 12px; height: 190px; background: linear-gradient(to top, rgba(249, 115, 22, 0.34), rgba(249, 115, 22, 0.08)); transform-origin: 50% 100%; border-radius: 2px 2px 0 0; }
+
+      /* ── HUD chrome ──────────────────────────────────────────── */
+      #hud .corner { position: absolute; width: 26px; height: 26px; border-color: var(--hair-strong); border-style: solid; border-width: 0; }
+      #hud .c-tl { left: 40px; top: 40px; border-left-width: 2px; border-top-width: 2px; }
+      #hud .c-tr { right: 40px; top: 40px; border-right-width: 2px; border-top-width: 2px; }
+      #hud .c-bl { left: 40px; bottom: 40px; border-left-width: 2px; border-bottom-width: 2px; }
+      #hud .c-br { right: 40px; bottom: 40px; border-right-width: 2px; border-bottom-width: 2px; }
+      #hud-url { position: absolute; right: 78px; top: 50px; display: flex; align-items: center; gap: 12px; padding: 10px 18px; background: rgba(255, 255, 255, 0.92); border: 2px solid var(--hair); border-radius: 999px; font-size: 20px; font-weight: 500; color: var(--muted); letter-spacing: 0.02em; }
+      #hud-url b { display: block; width: 11px; height: 11px; border-radius: 50%; background: var(--cap); box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.16); }
+      #metro { position: absolute; right: 84px; bottom: 62px; display: flex; gap: 9px; align-items: flex-end; }
+      #metro i { display: block; width: 6px; height: 24px; background: var(--brand); opacity: 0.18; border-radius: 1px; }
+      #hud-bpm { position: absolute; right: 150px; bottom: 60px; font-size: 18px; color: #6b6861; letter-spacing: 0.08em; }
+
+      /* ── shared UI atoms (rebuilt from the dashboard's own components) ── */
+      .ui-card { position: absolute; background: var(--card); border: 2px solid var(--hair); border-radius: 18px; box-shadow: var(--shadow); overflow: hidden; }
+      .ui-card img { display: block; width: 100%; height: auto; }
+      .eyebrow { font-family: "Geist Mono", monospace; font-size: 22px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--brand-ink); }
+      .scene { position: absolute; inset: 0; }
+
+      /* ── S1 · signal ─────────────────────────────────────────── */
+      #s1-words { position: absolute; inset: 0; }
+      #s1-words .w { position: absolute; left: 0; right: 0; top: 400px; height: 240px; display: flex; align-items: center; justify-content: center; font-size: 200px; font-weight: 500; letter-spacing: -0.05em; line-height: 1; opacity: 0; }
+      #s1-words .w span { display: block; }
+      #s1-words .w em { font-style: normal; color: var(--brand); }
+      #s1-live { position: absolute; left: 0; right: 0; top: 366px; display: flex; justify-content: center; }
+      #s1-live-tag { font-size: 22px; font-weight: 500; letter-spacing: 0.16em; color: #1b7959; }
+      #c-query { left: 96px; top: 118px; width: 640px; padding: 22px 26px; }
+      #c-query .row { display: flex; align-items: center; gap: 14px; font-size: 19px; }
+      #c-query .row + .row { margin-top: 14px; padding-top: 14px; border-top: 2px solid var(--hair); }
+      .pill { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border-radius: 999px; font-family: "Geist Mono", monospace; font-size: 15px; font-weight: 600; letter-spacing: 0.06em; }
+      .pill-run { background: rgba(31, 138, 101, 0.1); color: #1a7556; }
+      .pill-run i { display: block; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+      .pill-done { background: #f1f0ed; color: var(--muted); }
+      .q { flex: 1; font-family: "Geist Mono", monospace; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .qm { font-family: "Geist Mono", monospace; color: var(--muted); }
+      #c-merge { right: 96px; bottom: 214px; width: 560px; padding: 24px 28px; }
+      #c-merge .t { display: flex; justify-content: space-between; font-family: "Geist Mono", monospace; font-size: 17px; font-weight: 600; letter-spacing: 0.1em; color: var(--muted); }
+      #c-merge .n { margin-top: 12px; font-size: 26px; font-weight: 500; letter-spacing: -0.01em; }
+      #c-merge .track { margin-top: 16px; height: 12px; border-radius: 99px; background: #f1f0ed; overflow: hidden; }
+      #c-merge .fill { width: 100%; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #fb923c, var(--brand)); transform-origin: 0 50%; }
+      #c-disk { right: 96px; top: 104px; width: 540px; }
+      #c-warn { left: 70px; top: 452px; width: 420px; border-color: #fcd9b6; }
+      #c-topo { left: 96px; bottom: 214px; width: 640px; padding: 20px 24px; }
+      #c-topo img { width: 100%; }
+      #c-topo svg { display: block; margin-top: 12px; }
+
+      /* ── S2 · lockup ─────────────────────────────────────────── */
+      #lockup { position: absolute; left: 318px; top: 232px; width: 1300px; height: 300px; transform-origin: 0 0; }
+      #mark { position: absolute; left: 0; top: 0; width: 281.6px; height: 281.6px; }
+      #mark .b { position: absolute; background: var(--bar); transform-origin: 50% 100%; border-radius: 3px 3px 0 0; }
+      #sig { position: absolute; left: 29.04px; top: 85.8px; width: 33.44px; height: 29.04px; background: var(--cap); border-radius: 3px; }
+      #sig-ring { position: absolute; left: 29.04px; top: 85.8px; width: 33.44px; height: 29.04px; border-radius: 50%; border: 3px solid var(--cap); opacity: 0; }
+      #wordmark { position: absolute; left: 300px; top: 44px; height: 240px; overflow: hidden; font-size: 214px; font-weight: 650; letter-spacing: -0.035em; line-height: 240px; white-space: nowrap; }
+      #wordmark span { display: inline-block; }
+      #s2-head { position: absolute; left: 0; right: 0; top: 632px; display: flex; justify-content: center; gap: 22px; font-size: 84px; font-weight: 400; letter-spacing: -0.035em; }
+      #s2-head span { display: block; }
+      #s2-head .ch { color: var(--brand); position: relative; }
+      #s2-uline { position: absolute; left: 4px; right: 4px; bottom: -8px; height: 7px; border-radius: 4px; background: var(--brand); transform-origin: 0 50%; }
+      #shock { position: absolute; left: 459px; top: 372px; width: 2600px; height: 2600px; margin: -1300px 0 0 -1300px; border-radius: 50%; border: 4px solid var(--brand); opacity: 0; }
+
+      /* ── S3 · observe ────────────────────────────────────────── */
+      #s3-copy { position: absolute; left: 112px; top: 282px; width: 600px; }
+      #s3-copy h2 { margin-top: 26px; font-size: 104px; font-weight: 500; letter-spacing: -0.05em; line-height: 1.06; }
+      #s3-copy h2 span { display: block; }
+      #s3-copy h2 em { font-style: normal; color: var(--brand); }
+      #s3-copy p { margin-top: 34px; font-size: 30px; line-height: 1.35; color: var(--muted); letter-spacing: -0.005em; }
+      #s3-stage { position: absolute; left: 700px; top: 0; width: 1300px; height: 1080px; perspective: 2200px; }
+      #s3-grid { position: absolute; left: 0; top: 206px; width: 1296px; height: 660px; transform-style: preserve-3d; transform-origin: 30% 50%; }
+      #s3-grid .ui-card { border-radius: 16px; }
+      #g-storage { left: 0; top: 0; width: 420px; height: 219px; padding: 30px 32px; }
+      #g-storage .lbl { display: flex; align-items: center; gap: 10px; font-family: "Geist Mono", monospace; font-size: 19px; font-weight: 500; letter-spacing: 0.14em; color: var(--muted); }
+      #g-storage .num { margin-top: 18px; font-size: 76px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+      #g-storage .num small { font-size: 60px; }
+      #g-storage .track { margin-top: 22px; height: 16px; border-radius: 99px; background: #f1f0ed; overflow: hidden; }
+      #g-storage .fill { width: 94%; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #f43f5e, #fb7185); transform-origin: 0 50%; }
+      #g-uptime { left: 438px; top: 0; width: 420px; }
+      #g-warn { left: 876px; top: 0; width: 420px; border-color: #fcd9b6; }
+      #g-mem { left: 0; top: 237px; width: 420px; }
+      #g-cpu { left: 438px; top: 237px; width: 420px; }
+      #g-conn { left: 876px; top: 237px; width: 420px; }
+      #g-pill { left: 0; top: -82px; width: 660px; padding: 14px 20px; border-radius: 999px; }
+
+      /* ── S4 · diagnose ───────────────────────────────────────── */
+      #s4-copy { position: absolute; left: 112px; top: 300px; width: 620px; }
+      #s4-tick { position: relative; margin-top: 26px; height: 206px; overflow: hidden; }
+      #s4-tick .it { position: absolute; left: 0; top: 0; font-size: 92px; font-weight: 500; letter-spacing: -0.05em; line-height: 1.08; opacity: 0; }
+      #s4-tick .it span { display: block; }
+      #s4-copy p { margin-top: 28px; font-size: 30px; line-height: 1.35; color: var(--muted); }
+      #s4-idx { margin-top: 40px; display: flex; gap: 10px; }
+      #s4-idx i { display: block; width: 44px; height: 6px; border-radius: 3px; background: var(--hair); }
+      #s4-idx i b { display: block; width: 100%; height: 100%; border-radius: 3px; background: var(--brand); transform-origin: 0 50%; transform: scaleX(0); }
+      #s4-stage { position: absolute; left: 700px; top: 0; width: 1220px; height: 1080px; perspective: 2000px; }
+      .deck { position: absolute; left: 120px; top: 176px; width: 1040px; height: 728px; transform-style: preserve-3d; transform-origin: 0% 50%; }
+      .deck .bar { height: 44px; display: flex; align-items: center; gap: 9px; padding: 0 18px; border-bottom: 2px solid var(--hair); background: #fafaf9; }
+      .deck .bar i { display: block; width: 13px; height: 13px; border-radius: 50%; background: #e2e0da; }
+      .deck .bar span { margin-left: 16px; font-family: "Geist Mono", monospace; font-size: 17px; color: var(--muted); }
+      .deck .shot { width: 100%; height: 684px; overflow: hidden; }
+      .deck .shot img { display: block; width: 112%; height: auto; margin-left: -9%; }
+      .deck .shot-2x img { width: 122%; margin-left: -21.5%; }
+
+      /* ── S5 · ask ────────────────────────────────────────────── */
+      #s5-win { position: absolute; left: 260px; top: 110px; width: 1400px; height: 919px; transform-origin: 0 0; }
+      #s5-win .bar { height: 44px; display: flex; align-items: center; gap: 9px; padding: 0 18px; border-bottom: 2px solid var(--hair); background: #fafaf9; }
+      #s5-win .bar i { display: block; width: 13px; height: 13px; border-radius: 50%; background: #e2e0da; }
+      #s5-win .bar span { margin-left: 16px; font-family: "Geist Mono", monospace; font-size: 17px; color: var(--muted); }
+      #s5-view { position: relative; width: 1400px; height: 875px; }
+      #s5-view > img { display: block; width: 1400px; height: 875px; }
+      #s5-input { position: absolute; left: 313px; top: 350px; width: 640px; height: 50px; background: #fff; display: flex; align-items: center; font-size: 15px; color: var(--ink); }
+      #s5-caret { display: inline-block; width: 2px; height: 20px; margin-left: 2px; background: var(--brand); }
+      #s5-send { position: absolute; left: 958px; top: 360px; width: 31px; height: 31px; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center; opacity: 0; }
+      #s5-answer { position: absolute; left: 308px; top: 462px; width: 700px; height: 300px; background: #fff; padding: 6px 2px; }
+      #s5-answer .who { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--ink); }
+      #s5-answer .who .spark { color: var(--brand); font-size: 14px; }
+      #s5-answer .who .model { font-family: "Geist Mono", monospace; font-weight: 400; color: #2563eb; font-size: 11.5px; }
+      #s5-tool { margin-top: 10px; display: inline-flex; align-items: center; gap: 7px; padding: 5px 10px; border: 1.5px solid var(--hair); border-radius: 8px; font-family: "Geist Mono", monospace; font-size: 11px; color: var(--muted); }
+      #s5-tool b { display: block; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); }
+      #s5-answer .ln { margin-top: 10px; font-size: 14.5px; line-height: 1.45; color: var(--ink); }
+      #s5-answer .ln code { font-family: "Geist Mono", monospace; font-size: 13px; background: #f1f0ed; border-radius: 4px; padding: 1px 5px; }
+      #s5-answer .ln strong { font-weight: 600; }
+      #s5-answer .ln .hot { color: var(--brand-ink); font-weight: 600; }
+      #s5-label { position: absolute; right: 96px; top: 124px; width: 560px; padding: 28px 32px; }
+      #s5-label h3 { margin-top: 14px; font-size: 58px; font-weight: 500; letter-spacing: -0.04em; line-height: 1.02; }
+      #s5-label p { margin-top: 14px; font-size: 24px; color: var(--muted); }
+
+      /* ── S6 · end ────────────────────────────────────────────── */
+      #wipe { position: absolute; inset: 0; display: flex; }
+      #wipe i { display: block; flex: 1; height: 100%; background: var(--bar); transform-origin: 50% 100%; margin-right: -1px; }
+      #wipe i:nth-child(3n + 1) { background: #fb8a3c; }
+      #wipe i:nth-child(4n + 2) { background: var(--brand); }
+      #s6-head { position: absolute; left: 0; right: 0; top: 560px; display: flex; justify-content: center; gap: 18px; font-size: 68px; font-weight: 400; letter-spacing: -0.035em; }
+      #s6-head span { display: block; }
+      #s6-head .ch { color: var(--brand); }
+      #s6-chips { position: absolute; left: 0; right: 0; top: 700px; display: flex; justify-content: center; gap: 18px; }
+      .chip { display: flex; align-items: center; gap: 12px; padding: 16px 26px; background: var(--card); border: 2px solid var(--hair); border-radius: 999px; box-shadow: var(--shadow); font-size: 28px; font-weight: 500; letter-spacing: -0.01em; }
+      .chip .dot { display: block; width: 11px; height: 11px; border-radius: 50%; background: var(--cap); }
+      .chip .star { color: #b07c00; }
+      #s6-cta { position: absolute; left: 0; right: 0; top: 832px; display: flex; justify-content: center; }
+      #s6-btn { display: flex; align-items: center; gap: 16px; padding: 22px 40px; border-radius: 16px; background: var(--ink); color: #fff; font-family: "Geist Mono", monospace; font-size: 32px; font-weight: 500; letter-spacing: 0.01em; box-shadow: 0 24px 50px -18px rgba(38, 37, 30, 0.55); }
+      #s6-btn .arr { color: #fb923c; }
+    
+      /* ── global FX ───────────────────────────────────────────── */
+      #shake { position: absolute; inset: 0; }
+      #dive { position: absolute; inset: 0; background: var(--bar); opacity: 0; transform-origin: 50% 50%; }
+      #flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+      #particles { position: absolute; left: 459px; top: 372px; width: 0; height: 0; }
+      #particles i { position: absolute; left: -9px; top: -24px; display: block; width: 18px; height: 48px; border-radius: 3px; background: var(--bar); opacity: 0; }
+      #particles i.g { background: var(--cap); height: 18px; top: -9px; }
+      #particles i.k { background: var(--ink); width: 10px; height: 10px; border-radius: 50%; left: -5px; top: -5px; }
+      #cursor { position: absolute; left: 0; top: 0; width: 44px; height: 44px; opacity: 0; }
+      #cursor-ring { position: absolute; left: -30px; top: -30px; width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--brand); opacity: 0; }
+
+      /* ── P3 · drill-down chart ───────────────────────────────── */
+      #chart-cam { position: absolute; inset: 0; transform-origin: 0 0; }
+      #chart-card { position: absolute; left: 160px; top: 182px; width: 1600px; height: 780px; padding: 40px 44px; }
+      #chart-card .hd { display: flex; align-items: baseline; justify-content: space-between; }
+      #chart-card .hd h4 { font-family: "Geist Mono", monospace; font-size: 26px; font-weight: 600; letter-spacing: 0.12em; }
+      #chart-card .hd span { font-family: "Geist Mono", monospace; font-size: 22px; color: var(--muted); }
+      #chart-ylab { position: absolute; left: 44px; top: 120px; width: 96px; height: 520px; }
+      #chart-ylab div { position: absolute; right: 0; font-family: "Geist Mono", monospace; font-size: 19px; color: var(--muted); transform: translateY(-50%); }
+      #chart-xlab { position: absolute; left: 140px; top: 664px; width: 1380px; height: 30px; }
+      #chart-xlab div { position: absolute; font-family: "Geist Mono", monospace; font-size: 19px; color: var(--muted); transform: translateX(-50%); }
+      #chart-plot { position: absolute; left: 140px; top: 120px; width: 1380px; height: 520px; }
+      #chart-plot svg { position: absolute; inset: 0; overflow: visible; }
+      #chart-draw { position: absolute; inset: 0; }
+      #chart-scrub { position: absolute; left: 0; top: -10px; width: 3px; height: 540px; background: var(--ink); opacity: 0; }
+      #chart-read { position: absolute; left: 16px; top: 8px; padding: 12px 16px; border-radius: 12px; background: var(--ink); color: #fff; white-space: nowrap; }
+      #chart-read b { display: block; font-size: 26px; font-weight: 600; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+      #chart-read span { display: block; margin-top: 2px; font-family: "Geist Mono", monospace; font-size: 16px; color: #d6d3cb; }
+      #chart-dip { position: absolute; width: 0; height: 0; }
+      #chart-dip i { position: absolute; left: -16px; top: -16px; width: 32px; height: 32px; border-radius: 50%; background: var(--brand); border: 5px solid #fff; box-shadow: 0 0 0 3px var(--brand); }
+      #chart-dip u { position: absolute; left: -40px; top: -40px; width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--brand); }
+      #chart-note { position: absolute; left: 0; bottom: 34px; padding: 14px 20px; border-radius: 12px; background: #fff; border: 2px solid #fcd9b6; box-shadow: var(--shadow); white-space: nowrap; transform-origin: 0 100%; }
+      #chart-note b { display: block; font-size: 26px; font-weight: 600; color: var(--brand-ink); }
+      #chart-note span { display: block; margin-top: 2px; font-family: "Geist Mono", monospace; font-size: 17px; color: var(--muted); }
+      #s-chart-eb { position: absolute; left: 164px; top: 130px; }
+
+      /* ── P5 · alerts ─────────────────────────────────────────── */
+      #al-copy { position: absolute; left: 112px; top: 214px; width: 700px; }
+      #al-big { margin-top: 34px; font-size: 220px; font-weight: 600; letter-spacing: -0.06em; line-height: 1; color: var(--brand); font-variant-numeric: tabular-nums; }
+      #al-pill { margin-top: 34px; display: inline-flex; align-items: center; gap: 12px; padding: 10px 18px; border-radius: 999px; background: #fff4e8; border: 2px solid #fcd9b6; font-family: "Geist Mono", monospace; font-size: 21px; font-weight: 600; letter-spacing: 0.1em; color: var(--brand-ink); }
+      #al-copy p { margin-top: 30px; font-size: 30px; line-height: 1.35; color: var(--muted); }
+      #al-win { position: absolute; left: 860px; top: 90px; width: 1200px; transform-origin: 0 50%; opacity: 0.55; }
+      #al-bell { position: absolute; left: 902px; top: 150px; width: 96px; height: 96px; border-radius: 50%; background: var(--brand); display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 40px -12px rgba(245, 78, 0, 0.55); transform-origin: 50% 10%; }
+      #al-toasts { position: absolute; left: 1030px; top: 280px; width: 780px; height: 640px; }
+      .toast { position: absolute; left: 0; top: 0; width: 780px; display: flex; gap: 20px; align-items: center; padding: 22px 26px; }
+      .toast .ic { flex: none; width: 60px; height: 60px; border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 30px; font-weight: 700; }
+      .toast .tx { flex: 1; min-width: 0; }
+      .toast .tx b { display: flex; justify-content: space-between; font-size: 25px; font-weight: 600; letter-spacing: -0.01em; }
+      .toast .tx b em { font-style: normal; font-family: "Geist Mono", monospace; font-size: 17px; font-weight: 500; color: var(--muted); }
+      .toast .tx span { display: block; margin-top: 6px; font-family: "Geist Mono", monospace; font-size: 18px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+      /* ── P6 · light ↔ dark ───────────────────────────────────── */
+      #th-win { position: absolute; left: 260px; top: 110px; width: 1400px; height: 919px; transform-origin: 50% 50%; }
+      #th-win .bar, #hub-term .bar { height: 44px; display: flex; align-items: center; gap: 9px; padding: 0 18px; border-bottom: 2px solid var(--hair); background: #fafaf9; }
+      #th-win .bar i, #hub-term .bar i { display: block; width: 13px; height: 13px; border-radius: 50%; background: #e2e0da; }
+      #th-win .bar span { margin-left: 16px; font-family: "Geist Mono", monospace; font-size: 17px; color: var(--muted); }
+      #th-win img { display: block; width: 1400px; height: 875px; }
+      #th-dark { position: absolute; inset: 0; background: #0a0a0a; clip-path: circle(0px at 1521px 173px); }
+      #th-dark img { position: absolute; left: 0; top: -16px; width: 1920px; height: 1113px; transform-origin: 60% 40%; }
+      #th-dark video { position: absolute; left: 0; top: -23px; width: 1920px; height: 1126px; }
+      #th-shade { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 22% 88%, rgba(10, 10, 10, 0.86), rgba(10, 10, 10, 0) 70%); }
+      #th-copy { position: absolute; left: 112px; bottom: 120px; color: #fff; }
+      #th-copy h3 { font-size: 150px; font-weight: 500; letter-spacing: -0.055em; line-height: 1; }
+      #th-copy h3 span { display: block; }
+      #th-copy p { margin-top: 18px; font-family: "Geist Mono", monospace; font-size: 24px; color: #d4d4d8; letter-spacing: 0.04em; }
+
+      /* ── P8 · deploy hub ─────────────────────────────────────── */
+      #hub-copy { position: absolute; left: 112px; top: 112px; width: 760px; }
+      #hub-copy h3 { margin-top: 18px; font-size: 76px; font-weight: 500; letter-spacing: -0.045em; line-height: 1.05; }
+      #hub-cam { position: absolute; inset: 0; transform-origin: 960px 540px; }
+      #hub-lines { position: absolute; left: 0; top: 0; }
+      #hub-rings { position: absolute; left: 960px; top: 540px; width: 0; height: 0; }
+      #hub-rings i { position: absolute; border-radius: 50%; border: 2px dashed var(--hair-strong); }
+      #hub-core { position: absolute; left: 840px; top: 420px; width: 240px; height: 240px; border-radius: 50%; background: #fff; border: 2px solid var(--hair); box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; }
+      .node { position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 14px; padding: 14px 22px 14px 14px; background: #fff; border: 2px solid var(--hair); border-radius: 18px; box-shadow: var(--shadow); white-space: nowrap; }
+      .node .gl { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px; font-weight: 700; }
+      .node b { display: block; font-size: 26px; font-weight: 600; letter-spacing: -0.015em; }
+      .node span { display: block; font-family: "Geist Mono", monospace; font-size: 16px; color: var(--muted); }
+      #hub-term { position: absolute; left: 480px; top: 872px; width: 960px; border-radius: 16px; background: #1c1b17; border-color: #1c1b17; }
+      #hub-term .bar { background: #26251e; border-bottom-color: #33322b; height: 36px; }
+      #hub-term .bar i { background: #4a483f; }
+      #hub-term .cmd { padding: 18px 26px; font-family: "Geist Mono", monospace; font-size: 24px; color: #f4f4f5; white-space: nowrap; }
+      #hub-term .cmd em { font-style: normal; color: #fb923c; }
+      #hub-term .ok { color: #34d399; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="30" data-width="1920" data-height="1080">
+      <!-- ░░ background ░░ -->
+      <div id="bg" class="layer">
+        <div id="bg-dots" class="layer"></div>
+        <div id="bg-dots-mask"></div>
+        <svg id="bg-skyline" width="1920" height="1080" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <pattern id="sky" width="88" height="140" patternUnits="userSpaceOnUse">
+              <g fill="currentColor">
+                <rect x="6" y="112" width="8" height="28" /><rect x="20" y="44" width="8" height="96" /><rect x="34" y="88" width="8" height="52" />
+                <rect x="48" y="24" width="8" height="116" /><rect x="62" y="72" width="8" height="68" /><rect x="76" y="100" width="8" height="40" />
+              </g>
+            </pattern>
+            <radialGradient id="sky-fade" cx="50%" cy="46%" r="70%">
+              <stop offset="0%" stop-color="black" /><stop offset="58%" stop-color="black" /><stop offset="100%" stop-color="white" />
+            </radialGradient>
+            <mask id="sky-mask"><rect width="100%" height="100%" fill="url(#sky-fade)" /></mask>
+          </defs>
+          <rect id="sky-rect" width="1920" height="1080" fill="url(#sky)" mask="url(#sky-mask)" opacity="0.07" />
+        </svg>
+        <div id="bg-wash"></div>
+        <div id="bg-wash2"></div>
+      </div>
+
+      <div id="eq"></div>
+
+      <!-- ░░ world: beat kick (scale) → shake (x/y) → scenes ░░ -->
+      <div id="world" class="layer">
+        <div id="shake">
+          <!-- P0 · SIGNAL -->
+          <div id="s1" class="scene">
+            <div id="s1-live"><div id="s1-live-tag" class="mono">LIVE · SYSTEM TABLES</div></div>
+            <div id="s1-words">
+              <div class="w" id="w1"><span data-layout-allow-overlap>Queries<em data-layout-allow-overlap>.</em></span></div>
+              <div class="w" id="w2"><span data-layout-allow-overlap>Merges<em data-layout-allow-overlap>.</em></span></div>
+              <div class="w" id="w3"><span data-layout-allow-overlap>Parts<em data-layout-allow-overlap>.</em></span></div>
+              <div class="w" id="w4"><span data-layout-allow-overlap>Replicas<em data-layout-allow-overlap>.</em></span></div>
+              <div class="w" id="w5"><span data-layout-allow-overlap>Health<em data-layout-allow-overlap>.</em></span></div>
+            </div>
+            <div class="ui-card" id="c-query">
+              <div class="row"><span class="pill pill-run"><i></i>RUNNING</span><span class="q">SELECT q.* FROM system.processes</span><span class="qm">2.37 MB</span></div>
+              <div class="row"><span class="pill pill-done">DONE</span><span class="q">SELECT version(), uptime()</span><span class="qm">8.33 MB</span></div>
+            </div>
+            <div class="ui-card" id="c-merge">
+              <div class="t"><span>MERGE · system.metric_log</span><span>68%</span></div>
+              <div class="n">3 parts → 1 part</div>
+              <div class="track"><div class="fill" id="c-merge-fill"></div></div>
+            </div>
+            <div class="ui-card" id="c-disk"><img src="assets/ui/card-disk.png" alt="" /></div>
+            <div class="ui-card" id="c-warn"><img src="assets/ui/card-disk-warning.png" alt="" /></div>
+            <div class="ui-card" id="c-topo">
+              <img src="assets/ui/pill-online.png" alt="" />
+              <svg width="592" height="92" viewBox="0 0 592 92" aria-hidden="true">
+                <path id="topo-l1" d="M70 30 H296" stroke="#cfcdc4" stroke-width="3" fill="none" stroke-dasharray="226" stroke-dashoffset="226" />
+                <path id="topo-l2" d="M296 30 H522" stroke="#cfcdc4" stroke-width="3" fill="none" stroke-dasharray="226" stroke-dashoffset="226" />
+                <g font-family="Geist Mono, monospace" font-size="15" fill="#5a5852" text-anchor="middle">
+                  <circle cx="70" cy="30" r="13" fill="#fff" stroke="#10b981" stroke-width="3" /><text x="70" y="72">replica-0</text>
+                  <circle cx="296" cy="30" r="13" fill="#fff" stroke="#f97316" stroke-width="3" /><text x="296" y="72">keeper</text>
+                  <circle cx="522" cy="30" r="13" fill="#fff" stroke="#10b981" stroke-width="3" /><text x="522" y="72">replica-1</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- P2 · OBSERVE -->
+          <div id="s3" class="scene" style="opacity: 0">
+            <div id="s3-cam" class="layer" style="transform-origin: 0 0">
+              <div id="s3-stage" data-layout-allow-overflow>
+                <div id="s3-grid">
+                  <div class="ui-card" id="g-pill"><img src="assets/ui/pill-online-grid.png" alt="" /></div>
+                  <div class="ui-card" id="g-storage">
+                    <div class="lbl">
+                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12H2" /><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" /><path d="M6 16h.01" /><path d="M10 16h.01" /></svg>
+                      STORAGE
+                    </div>
+                    <div class="num"><span id="g-storage-n">0</span> <small>GiB</small></div>
+                    <div class="track"><div class="fill" id="g-storage-fill"></div></div>
+                  </div>
+                  <div class="ui-card" id="g-uptime"><img src="assets/ui/card-uptime.png" alt="" /></div>
+                  <div class="ui-card" id="g-warn"><img src="assets/ui/card-disk-warning-grid.png" alt="" /></div>
+                  <div class="ui-card" id="g-mem"><img src="assets/ui/chart-memory.png" alt="" /></div>
+                  <div class="ui-card" id="g-cpu"><img src="assets/ui/chart-cpu.png" alt="" /></div>
+                  <div class="ui-card" id="g-conn"><img src="assets/ui/chart-conn.png" alt="" /></div>
+                </div>
+              </div>
+            </div>
+            <div id="s3-copy">
+              <div class="eyebrow" id="s3-eb">01 · Observe</div>
+              <h2 id="s3-h"><span id="s3-h1">Your cluster,</span><span id="s3-h2"><em>live.</em></span></h2>
+              <p id="s3-p">Queries, merges, parts, replication and disk — straight from system tables.</p>
+            </div>
+          </div>
+
+          <!-- P3 · DRILL DOWN -->
+          <div id="s-chart" class="scene" style="opacity: 0">
+            <div id="chart-cam">
+              <div class="eyebrow" id="s-chart-eb">02 · Drill down</div>
+              <div class="ui-card" id="chart-card">
+                <div class="hd"><h4>MEMORY USAGE</h4><span>last 24h · every 10 min</span></div>
+                <div id="chart-ylab"></div>
+                <div id="chart-plot" data-layout-allow-overflow>
+                  <svg id="chart-grid" width="1380" height="520" viewBox="0 0 1380 520" preserveAspectRatio="none" aria-hidden="true"></svg>
+                  <div id="chart-draw">
+                    <svg width="1380" height="520" viewBox="0 0 1380 520" preserveAspectRatio="none" aria-hidden="true">
+                      <defs>
+                        <linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#60a5fa" stop-opacity="0.55" /><stop offset="100%" stop-color="#93c5fd" stop-opacity="0.12" /></linearGradient>
+                      </defs>
+                      <path id="chart-area" fill="url(#chart-fill)" />
+                      <path id="chart-line" fill="none" stroke="#3b82f6" stroke-width="3.5" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+                  <div id="chart-scrub"><div id="chart-read"><b id="chart-read-v">0 MB</b><span id="chart-read-t">13:50</span></div></div>
+                  <div id="chart-dip"><u></u><i></i><div id="chart-note"><b>Memory dip · 04:28</b><span>click → the queries running at that moment</span></div></div>
+                </div>
+                <div id="chart-xlab"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- P4 · DIAGNOSE -->
+          <div id="s4" class="scene" style="opacity: 0">
+            <div id="s4-copy">
+              <div class="eyebrow">03 · Diagnose</div>
+              <div id="s4-tick">
+                <div class="it" id="t1"><span data-layout-allow-overlap>Running</span><span data-layout-allow-overlap>queries</span></div>
+                <div class="it" id="t2"><span data-layout-allow-overlap>Cluster</span><span data-layout-allow-overlap>topology</span></div>
+                <div class="it" id="t3"><span data-layout-allow-overlap>EXPLAIN</span><span data-layout-allow-overlap>plans</span></div>
+                <div class="it" id="t4"><span data-layout-allow-overlap>SQL</span><span data-layout-allow-overlap>console</span></div>
+              </div>
+              <p>From a spike to the query behind it.</p>
+              <div id="s4-idx"><i><b id="ix1"></b></i><i><b id="ix2"></b></i><i><b id="ix3"></b></i><i><b id="ix4"></b></i></div>
+            </div>
+            <div id="s4-stage" data-layout-allow-overflow>
+              <div class="ui-card deck" id="d1"><div class="bar"><i></i><i></i><i></i><span data-layout-allow-overlap>dash.chmonitor.dev/running-queries</span></div><div class="shot"><img src="assets/ui/running-queries-light.png" alt="" /></div></div>
+              <div class="ui-card deck" id="d2"><div class="bar"><i></i><i></i><i></i><span data-layout-allow-overlap>dash.chmonitor.dev/cluster</span></div><div class="shot"><img src="assets/ui/cluster-topology-light.png" alt="" /></div></div>
+              <div class="ui-card deck" id="d3"><div class="bar"><i></i><i></i><i></i><span data-layout-allow-overlap>dash.chmonitor.dev/explain</span></div><div class="shot"><img src="assets/ui/explain-light.png" alt="" /></div></div>
+              <div class="ui-card deck" id="d4"><div class="bar"><i></i><i></i><i></i><span data-layout-allow-overlap>dash.chmonitor.dev/sql</span></div><div class="shot shot-2x"><img src="assets/ui/app-sql.png" alt="" /></div></div>
+            </div>
+          </div>
+
+          <!-- P5 · ALERT -->
+          <div id="s-alert" class="scene" style="opacity: 0">
+            <div class="ui-card" id="al-win" data-layout-allow-overflow><img src="assets/ui/app-health.png" alt="" /></div>
+            <div id="al-copy">
+              <div class="eyebrow">04 · Alert</div>
+              <div id="al-big"><span id="al-n">0.0</span>%</div>
+              <div id="al-pill">DISK USAGE · WARNING</div>
+              <p>Threshold alerts to Slack, Discord, PagerDuty, Opsgenie, and more.</p>
+            </div>
+            <div id="al-bell"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" /></svg></div>
+            <div id="al-toasts">
+              <div class="ui-card toast" id="to1"><div class="ic" style="background: #4a154b">S</div><div class="tx"><b>Disk usage 93.7% <em>Slack · now</em></b><span>chi-clickhouse-default-0-0-0 · default · 28.8 GiB free</span></div></div>
+              <div class="ui-card toast" id="to2"><div class="ic" style="background: #5865f2">D</div><div class="tx"><b>Disk usage 93.7% <em>Discord · now</em></b><span>#clickhouse-alerts · chi-clickhouse-default-0-0-0</span></div></div>
+              <div class="ui-card toast" id="to3"><div class="ic" style="background: #06ac38">P</div><div class="tx"><b>Incident triggered <em>PagerDuty · now</em></b><span>chmonitor · disk_usage warning · 93.7%</span></div></div>
+              <div class="ui-card toast" id="to4"><div class="ic" style="background: #2684ff">O</div><div class="tx"><b>Alert created <em>Opsgenie · now</em></b><span>P3 · ClickHouse disk usage above threshold</span></div></div>
+            </div>
+          </div>
+
+          <!-- P6 · LIGHT ↔ DARK -->
+          <div id="s-theme" class="scene" style="opacity: 0">
+            <div class="ui-card" id="th-win"><div class="bar"><i></i><i></i><i></i><span>dash.chmonitor.dev/health</span></div><img src="assets/ui/app-health-theme.png" alt="" /></div>
+            <div id="th-dark">
+              <img id="th-bg" src="assets/ui/dark-painterly.jpg" alt="" />
+              <video id="th-clip" class="clip" src="assets/video/dark-insights.mp4" data-start="19.85" data-duration="1.2" data-track-index="3" muted playsinline></video>
+              <div id="th-shade"></div>
+              <div id="th-copy"><h3><span id="th-h1">Light</span><span id="th-h2">&amp; dark.</span></h3><p id="th-p">SAME DASHBOARD · YOUR THEME</p></div>
+            </div>
+          </div>
+
+          <!-- P7 · ASK -->
+          <div id="s5" class="scene" style="opacity: 0">
+            <div class="ui-card" id="s5-win" data-layout-allow-overflow>
+              <div class="bar"><i></i><i></i><i></i><span>dash.chmonitor.dev/ai-chat</span></div>
+              <div id="s5-view">
+                <img src="assets/ui/app-ai-chat.png" alt="" />
+                <div id="s5-input"><span id="s5-typed"></span><span id="s5-caret"></span></div>
+                <div id="s5-send"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg></div>
+                <div id="s5-answer">
+                  <div class="who"><span class="spark">✦</span>AI Agent <span class="model">openrouter:openrouter/free</span></div>
+                  <div id="s5-tool"><b></b>ran query · system.disks, system.parts</div>
+                  <div class="ln" id="a1">Disk <code>default</code> is <span class="hot">93.7% full</span> — 427.5 GiB of 456.3 GiB, 28.8 GiB free.</div>
+                  <div class="ln" id="a2">The heaviest tables are system logs: <code>metric_log</code> and <code>part_log</code>.</div>
+                  <div class="ln" id="a3"><strong>Fix:</strong> add a TTL to <code>system.metric_log</code> and drop old partitions.</div>
+                </div>
+              </div>
+            </div>
+            <div class="ui-card" id="s5-label">
+              <div class="eyebrow">05 · Ask</div>
+              <h3>An AI advisor on top.</h3>
+              <p>Read-only by default. MCP-ready.</p>
+            </div>
+          </div>
+
+          <!-- P8 · DEPLOY -->
+          <div id="s-hub" class="scene" style="opacity: 0">
+            <div id="hub-cam">
+              <svg id="hub-lines" width="1920" height="1080" viewBox="0 0 1920 1080" aria-hidden="true"></svg>
+              <div id="hub-rings"><i id="hr1" style="left: -200px; top: -200px; width: 400px; height: 400px"></i><i id="hr2" style="left: -330px; top: -330px; width: 660px; height: 660px"></i></div>
+              <div id="hub-core">
+                <svg width="150" height="150" viewBox="0 0 32 32" aria-hidden="true">
+                  <rect class="hb" x="3.3" y="13.05" width="3.8" height="15.45" fill="#f97316" /><rect class="hb" x="8.7" y="3.5" width="3.8" height="25" fill="#f97316" /><rect class="hb" x="14.1" y="13.25" width="3.8" height="15.25" fill="#f97316" /><rect class="hb" x="19.5" y="6.25" width="3.8" height="22.25" fill="#f97316" /><rect class="hb" x="24.9" y="16.8" width="3.8" height="11.7" fill="#f97316" /><rect x="3.3" y="9.75" width="3.8" height="3.3" fill="#10b981" />
+                </svg>
+              </div>
+              <div id="hub-nodes"></div>
+            </div>
+            <div id="hub-copy">
+              <div class="eyebrow">06 · Deploy</div>
+              <h3>Self-host anywhere.</h3>
+            </div>
+            <div class="ui-card" id="hub-term">
+              <div class="bar"><i></i><i></i><i></i></div>
+              <div class="cmd"><em>$</em> <span id="hub-typed"></span><span id="hub-ok" class="ok"></span></div>
+            </div>
+          </div>
+
+          <!-- P9 · END -->
+          <div id="s6" class="scene" style="opacity: 0">
+            <div id="s6-head"><span>The</span><span>ops</span><span>dashboard</span><span>for</span><span class="ch">ClickHouse.</span></div>
+            <div id="s6-chips">
+              <div class="chip" id="ch1"><span class="dot"></span>Open source</div>
+              <div class="chip" id="ch2"><span class="dot"></span>Self-host free</div>
+              <div class="chip" id="ch3"><span class="dot"></span>MCP-ready</div>
+              <div class="chip" id="ch4"><span class="star">★</span>297 on GitHub</div>
+            </div>
+            <div id="s6-cta"><div id="s6-btn">chmonitor.dev <span class="arr">→</span></div></div>
+          </div>
+
+          <!-- P1 · LOCKUP (docks into the corner, returns for the end card) -->
+          <div id="s2" class="scene">
+            <div id="particles"></div>
+            <div id="lockup">
+              <div id="mark">
+                <div class="b" id="b1" style="left: 29.04px; top: 114.84px; width: 33.44px; height: 135.96px"></div>
+                <div class="b" id="b2" style="left: 76.56px; top: 30.8px; width: 33.44px; height: 220px"></div>
+                <div class="b" id="b3" style="left: 124.08px; top: 116.6px; width: 33.44px; height: 134.2px"></div>
+                <div class="b" id="b4" style="left: 171.6px; top: 55px; width: 33.44px; height: 195.8px"></div>
+                <div class="b" id="b5" style="left: 219.12px; top: 147.84px; width: 33.44px; height: 102.96px"></div>
+                <div id="sig-ring"></div>
+                <div id="sig"></div>
+              </div>
+              <div id="wordmark"><span data-layout-allow-overlap>c</span><span data-layout-allow-overlap>h</span><span data-layout-allow-overlap>m</span><span data-layout-allow-overlap>o</span><span data-layout-allow-overlap>n</span><span data-layout-allow-overlap>i</span><span data-layout-allow-overlap>t</span><span data-layout-allow-overlap>o</span><span data-layout-allow-overlap>r</span></div>
+            </div>
+            <div id="s2-head"><span>The</span><span>ops</span><span>dashboard</span><span>for</span><span class="ch">ClickHouse.<i id="s2-uline"></i></span></div>
+            <div id="shock"></div>
+          </div>
+
+          <svg id="cursor" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 2 L4 19 L8.5 15 L11.5 22 L14.5 20.7 L11.6 14 L18 14 Z" fill="#26251e" stroke="#fff" stroke-width="1.6" stroke-linejoin="round" /></svg>
+          <div id="cursor-ring"></div>
+        </div>
+      </div>
+
+      <div id="dive"></div>
+
+      <!-- ░░ HUD ░░ -->
+      <div id="hud" class="layer">
+        <div class="corner c-tl"></div><div class="corner c-tr"></div><div class="corner c-bl"></div><div class="corner c-br"></div>
+        <div id="hud-url" class="mono"><b></b>dash.chmonitor.dev</div>
+        <div id="hud-bpm" class="mono">160 BPM</div>
+        <div id="metro"><i></i><i></i><i></i><i></i></div>
+      </div>
+
+      <div id="wipe"></div>
+      <div id="flash"></div>
+      <div id="grain"></div>
+
+      <audio id="bgm" src="assets/audio/bgm30.mp3" data-start="0" data-duration="30" data-track-index="6"></audio>
+    </div>
+    <script>
+      // ─────────────────────────────────────────────────────────────
+      // One tempo grid drives everything: 160 BPM, 3s phrases, the drop
+      // on t = 3.0. BEATS are detected onsets (hyperframes beats) — the
+      // music-reactive layer, camera kicks and every cut read from here.
+      // ─────────────────────────────────────────────────────────────
+      const B = 0.375;
+      const DUR = 30;
+      const BEATS = [
+        [0, 0.54], [0.375, 0.16], [1.875, 0.31], [2.625, 0.34],
+        [3.007, 0.92], [3.564, 0.85], [4.911, 0.95], [5.248, 0.32], [5.631, 0.35],
+        [6.037, 1], [6.594, 0.89], [7.535, 0.42], [7.906, 1], [8.255, 0.32], [8.44, 0.69], [8.626, 0.68], [8.824, 0.76],
+        [9.009, 0.78], [9.567, 0.89], [10.879, 0.72], [11.25, 0.32], [11.633, 0.35],
+        [12.005, 0.75], [12.574, 0.91], [13.886, 0.76], [14.257, 0.32],
+        [15.012, 0.9], [15.569, 0.84], [16.881, 0.82], [17.252, 0.54],
+        [18.007, 0.89], [18.564, 0.78], [19.876, 0.68], [20.259, 0.46], [20.445, 0.86], [20.631, 0.89], [20.817, 0.87],
+        [21.002, 0.87], [21.571, 0.84], [22.883, 0.82], [23.255, 0.54],
+        [24.009, 0.9], [24.567, 0.84], [25.879, 0.72], [26.25, 0.45],
+        [27.005, 0.9], [27.574, 0.77], [28.886, 0.67], [29.257, 0.2],
+      ];
+
+      // deterministic pseudo-random (index-derived, never Math.random)
+      const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+      const $ = (id) => document.getElementById(id);
+
+      function envAt(t) {
+        let e = 0;
+        for (let k = 0; k < BEATS.length; k++) {
+          const d = t - BEATS[k][0];
+          if (d < 0) break;
+          if (d < 0.9) e += BEATS[k][1] * Math.exp(-d / 0.16);
+        }
+        return Math.min(1.2, e);
+      }
+
+      // ── build procedural parts ──────────────────────────────────
+      const eq = $("eq");
+      const EQ_N = 72;
+      for (let i = 0; i < EQ_N; i++) eq.appendChild(document.createElement("i"));
+      const eqBars = Array.from(eq.children);
+      const wipe = $("wipe");
+      const WIPE_N = 24;
+      for (let i = 0; i < WIPE_N; i++) wipe.appendChild(document.createElement("i"));
+      const wipeBars = Array.from(wipe.children);
+      const metro = Array.from(document.querySelectorAll("#metro i"));
+      const world = $("world");
+
+      // particles for the drop
+      const PART_N = 40;
+      const parts = $("particles");
+      for (let i = 0; i < PART_N; i++) {
+        const p = document.createElement("i");
+        if (i % 6 === 0) p.className = "g";
+        else if (i % 5 === 0) p.className = "k";
+        parts.appendChild(p);
+      }
+
+      // drill-down chart — a rebuild of the dashboard's MEMORY USAGE chart
+      const CW = 1380, CH = 520, VMIN = 286.1, VMAX = 572.2;
+      const DIPS = [[0.07, 0.006, -190], [0.12, 0.004, -120], [0.235, 0.008, -160], [0.62, 0.005, -150], [0.665, 0.0045, -235], [0.69, 0.004, -140]];
+      const val = (u) => {
+        let v = 525 + 18 * Math.sin(u * 43) + 12 * Math.sin(u * 131 + 1) + 8 * Math.sin(u * 277 + 2);
+        for (const [c, w, a] of DIPS) v += a * Math.exp(-(((u - c) / w) ** 2));
+        return Math.max(292, Math.min(568, v));
+      };
+      const yOf = (v) => CH * (1 - (v - VMIN) / (VMAX - VMIN));
+      const clockOf = (u) => { const m = Math.round(13 * 60 + 50 + u * 22 * 60) % 1440; return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; };
+      const N = 320;
+      let line = "";
+      for (let i = 0; i <= N; i++) { const u = i / N; line += `${i ? "L" : "M"}${(u * CW).toFixed(1)} ${yOf(val(u)).toFixed(1)} `; }
+      $("chart-line").setAttribute("d", line);
+      $("chart-area").setAttribute("d", `${line}L${CW} ${CH} L0 ${CH} Z`);
+      let dipU = 0.64, dipV = 999;
+      for (let i = 0; i <= 500; i++) { const u = 0.64 + (0.05 * i) / 500; const v = val(u); if (v < dipV) { dipV = v; dipU = u; } }
+      const DIP_X = dipU * CW, DIP_Y = yOf(dipV);
+      $("chart-dip").style.left = `${DIP_X}px`;
+      $("chart-dip").style.top = `${DIP_Y}px`;
+      $("chart-note").querySelector("b").textContent = `Memory dip · ${clockOf(dipU)}`;
+      const gridSvg = $("chart-grid");
+      [572.2, 500.7, 429.2, 357.6, 286.1].forEach((v) => {
+        const y = yOf(v);
+        const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        l.setAttribute("x1", 0); l.setAttribute("x2", CW); l.setAttribute("y1", y); l.setAttribute("y2", y);
+        l.setAttribute("stroke", "#eceae5"); l.setAttribute("stroke-width", 2);
+        gridSvg.appendChild(l);
+        const d = document.createElement("div");
+        d.style.top = `${y}px`; d.textContent = `${v} MB`;
+        $("chart-ylab").appendChild(d);
+      });
+      ["13:50", "17:30", "21:10", "00:50", "04:30", "08:10", "11:50"].forEach((s, i) => {
+        const d = document.createElement("div");
+        d.style.left = `${(i / 6) * CW}px`; d.textContent = s;
+        $("chart-xlab").appendChild(d);
+      });
+
+      // deploy hub — nodes on an ellipse around the core
+      const HUB = { cx: 960, cy: 560, rx: 640, ry: 270 };
+      const NODES = [
+        ["Docker", "ghcr.io image", "#2496ed", "D"],
+        ["Kubernetes", "Helm chart", "#326ce5", "K"],
+        ["Cloudflare", "Workers", "#f38020", "C"],
+        ["Railway · Fly", "one-click", "#7c3aed", "R"],
+        ["ClickHouse Cloud", "any ClickHouse", "#26251e", "CH"],
+        ["Altinity", "OSS & managed", "#1f8a65", "A"],
+        ["Cursor", "MCP client", "#3b3a33", "⌘"],
+        ["Claude Code", "MCP client", "#d97757", "✦"],
+      ];
+      const hubLines = $("hub-lines");
+      const nodeEls = [], lineEls = [], packetEls = [];
+      NODES.forEach(([name, sub, color, glyph], i) => {
+        const a = (-90 + i * 45) * (Math.PI / 180);
+        const x = HUB.cx + HUB.rx * Math.cos(a), y = HUB.cy + HUB.ry * Math.sin(a);
+        const n = document.createElement("div");
+        n.className = "node";
+        n.style.left = `${x}px`; n.style.top = `${y}px`;
+        n.innerHTML = `<div class="gl" style="background:${color}">${glyph}</div><div><b>${name}</b><span>${sub}</span></div>`;
+        $("hub-nodes").appendChild(n);
+        nodeEls.push(n);
+        const len = Math.hypot(x - HUB.cx, y - HUB.cy);
+        const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        l.setAttribute("x1", HUB.cx); l.setAttribute("y1", HUB.cy); l.setAttribute("x2", x); l.setAttribute("y2", y);
+        l.setAttribute("stroke", "#cfcdc4"); l.setAttribute("stroke-width", 3);
+        l.setAttribute("stroke-dasharray", len); l.setAttribute("stroke-dashoffset", len);
+        hubLines.appendChild(l);
+        lineEls.push([l, len, x, y]);
+        const p = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        p.setAttribute("r", 7); p.setAttribute("fill", "#f54e00"); p.setAttribute("cx", HUB.cx); p.setAttribute("cy", HUB.cy); p.setAttribute("opacity", 0);
+        hubLines.appendChild(p);
+        packetEls.push(p);
+      });
+
+      const tl = gsap.timeline({ paused: true });
+
+      // ── helpers: camera shake + chromatic split ─────────────────
+      function shake(t, a) {
+        const K = [[a, -0.6 * a], [-0.8 * a, 0.5 * a], [0.55 * a, -0.35 * a], [-0.3 * a, 0.2 * a], [0.12 * a, -0.08 * a], [0, 0]];
+        K.forEach(([x, y], i) => tl.to("#shake", { x, y, duration: 0.04, ease: "none" }, t + i * 0.04));
+      }
+      const RGB_ON = (px) => `drop-shadow(${px}px 0px 0px rgba(0,190,255,0.6)) drop-shadow(${-px}px 0px 0px rgba(255,0,90,0.55))`;
+      const RGB_OFF = "drop-shadow(0px 0px 0px rgba(0,190,255,0)) drop-shadow(0px 0px 0px rgba(255,0,90,0))";
+      function rgbSplit(sel, t, px) {
+        tl.fromTo(sel, { filter: RGB_ON(px) }, { filter: RGB_OFF, duration: 0.32, ease: "power2.out", immediateRender: false }, t);
+        tl.set(sel, { filter: "none" }, t + 0.34);
+      }
+      function flash(t, o) { tl.fromTo("#flash", { opacity: o }, { opacity: 0, duration: 0.32, ease: "power2.out", immediateRender: false }, t); }
+
+      // ── music-reactive layer (one proxy tween, state = f(time)) ──
+      const clock = { t: 0 };
+      function drive() {
+        const t = clock.t;
+        const e = envAt(t);
+        const post = t >= 3 ? 1 : 0.38 + 0.2 * (t / 3);
+        const tail = t > 28.6 ? Math.max(0.2, 1 - (t - 28.6) / 1.4) : 1;
+        for (let i = 0; i < EQ_N; i++) {
+          const base = 0.18 + 0.55 * hash(i);
+          const wave = 0.55 + 0.45 * Math.sin(i * 0.55 + t * 5.2 + hash(i + 9) * 6.28);
+          const s = post * tail * base * (0.3 + 0.9 * e * (0.45 + 0.55 * hash(i + Math.floor(t / B) * 7))) * wave;
+          eqBars[i].style.transform = `scaleY(${Math.max(0.03, Math.min(1, s)).toFixed(4)})`;
+        }
+        let kick = 0;
+        for (let k = 0; k < BEATS.length; k++) {
+          const [bt, st] = BEATS[k];
+          if (bt < 3 || st < 0.75) continue;
+          const d = t - bt;
+          if (d >= 0 && d < 0.5) kick = Math.max(kick, st * Math.exp(-d / 0.09));
+        }
+        world.style.transform = `scale(${(1 + 0.014 * kick).toFixed(5)})`;
+        const bi = Math.floor(t / B + 1e-6);
+        const phase = t - bi * B;
+        for (let i = 0; i < 4; i++) {
+          const on = bi % 4 === i ? Math.max(0, 1 - phase / 0.3) : 0;
+          metro[i].style.opacity = (0.18 + 0.82 * on * (0.6 + 0.4 * e)).toFixed(3);
+          metro[i].style.transform = `scaleY(${(1 + 0.6 * on).toFixed(3)})`;
+        }
+        $("bg-wash").style.opacity = (0.75 + 0.35 * Math.min(1, e)).toFixed(3);
+      }
+      tl.to(clock, { t: DUR, duration: DUR, ease: "none", onUpdate: drive }, 0);
+      drive();
+
+      // ambient background drift
+      tl.fromTo("#bg-dots", { backgroundPosition: "0px 0px" }, { backgroundPosition: "0px -110px", duration: DUR, ease: "none" }, 0);
+      tl.fromTo("#bg-wash", { x: -120 }, { x: 160, duration: DUR, ease: "sine.inOut" }, 0);
+      tl.fromTo("#bg-wash2", { x: 60, y: 30 }, { x: -200, y: -60, duration: DUR, ease: "sine.inOut" }, 0);
+      tl.fromTo("#grain", { x: 0, y: 0 }, { x: -30, y: 18, duration: DUR, ease: "steps(80)" }, 0);
+      tl.fromTo("#hud .corner", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.5, ease: "expo.out", stagger: 0.06 }, 0.1);
+      tl.fromTo("#hud-url", { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 3.2);
+      tl.fromTo("#hud-bpm", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0.2);
+      tl.set("#lockup", { x: 0, y: 0, scale: 1, opacity: 1 }, 0);
+      tl.set("#flash", { opacity: 0 }, 0);
+      tl.set("#s3-stage", { scale: 1 }, 0);
+      tl.set("#shake", { x: 0, y: 0 }, 0);
+
+      // ════════ P0 · SIGNAL (0 – 3.0) ════════
+      const SIG_S1 = { x: 584, y: 0, scaleX: 0.87, borderRadius: "50%" };
+      tl.fromTo("#sig", { ...SIG_S1, scale: 0 }, { ...SIG_S1, scale: 1, duration: 0.4, ease: "back.out(3)" }, 0);
+      [0, 0.75, 1.5, 2.25].forEach((t0) => {
+        tl.fromTo("#sig-ring", { x: 584, opacity: 0.9, scale: 1 }, { x: 584, opacity: 0, scale: 3.6, duration: 0.7, ease: "power2.out", immediateRender: false }, t0);
+      });
+      tl.fromTo("#s1-live-tag", { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 0.1);
+      const W = [0, 0.75, 1.125, 1.5, 1.875];
+      tl.fromTo("#w1", { opacity: 0, scale: 1.35, filter: "blur(18px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.34, ease: "power4.out" }, W[0]);
+      tl.set("#w1", { opacity: 0 }, W[1]);
+      tl.fromTo("#w2", { opacity: 0, x: 340 }, { opacity: 1, x: 0, duration: 0.3, ease: "expo.out" }, W[1]);
+      tl.set("#w2", { opacity: 0 }, W[2]);
+      tl.fromTo("#w3", { opacity: 0, y: 110, rotation: 5 }, { opacity: 1, y: 0, rotation: 0, duration: 0.3, ease: "circ.out" }, W[2]);
+      tl.set("#w3", { opacity: 0 }, W[3]);
+      tl.fromTo("#w4", { opacity: 0, y: -120 }, { opacity: 1, y: 0, duration: 0.3, ease: "expo.out" }, W[3]);
+      tl.set("#w4", { opacity: 0 }, W[4]);
+      tl.fromTo("#w5", { opacity: 0, scale: 0.55 }, { opacity: 1, scale: 1, duration: 0.36, ease: "back.out(2.2)" }, W[4]);
+      const CARDS = [
+        ["#c-query", W[0] + 0.06, { x: -60, y: -40, rotation: -5 }, -2.5],
+        ["#c-merge", W[1] + 0.04, { x: 80, y: 40, rotation: 6 }, 2],
+        ["#c-disk", W[2] + 0.04, { x: 70, y: -50, rotation: 5 }, 2.5],
+        ["#c-topo", W[3] + 0.04, { x: -70, y: 60, rotation: -6 }, -2],
+        ["#c-warn", W[4] + 0.04, { x: -90, y: 0, rotation: -7 }, -3],
+      ];
+      CARDS.forEach(([sel, t0, from, rest]) => {
+        tl.fromTo(sel, { opacity: 0, scale: 0.6, ...from }, { opacity: 1, scale: 1, x: 0, y: 0, rotation: rest, duration: 0.5, ease: "back.out(1.7)" }, t0);
+        tl.to(sel, { y: -14, duration: 1.1, ease: "sine.inOut" }, t0 + 0.5);
+      });
+      tl.fromTo("#c-merge-fill", { scaleX: 0 }, { scaleX: 0.68, duration: 1.2, ease: "power2.out" }, W[1] + 0.2);
+      tl.to("#topo-l1", { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, W[3] + 0.2);
+      tl.to("#topo-l2", { strokeDashoffset: 0, duration: 0.35, ease: "power2.out" }, W[3] + 0.4);
+      const IMP = 2.625;
+      const PULL = { "#c-query": [544, 340], "#c-merge": [-560, -230], "#c-disk": [-520, 330], "#c-topo": [520, -250], "#c-warn": [680, 0] };
+      Object.entries(PULL).forEach(([sel, [dx, dy]]) => {
+        tl.to(sel, { x: dx, y: dy, scale: 0.08, rotation: 0, opacity: 0, duration: B, ease: "power3.in" }, IMP);
+      });
+      tl.to("#w5", { scale: 0.05, opacity: 0, y: -80, duration: B, ease: "power3.in" }, IMP);
+      tl.to("#s1-live-tag", { opacity: 0, duration: 0.2 }, IMP);
+      tl.to("#sig", { x: 0, y: 136, scaleX: 1, borderRadius: "3px", duration: B, ease: "power3.inOut" }, IMP);
+
+      // ════════ P1 · DROP → LOCKUP (3.0 – 6.0) ════════
+      const DROP = 3;
+      shake(DROP, 16);
+      tl.fromTo("#shock", { opacity: 0.9, scale: 0.004 }, { opacity: 0, scale: 1, duration: 1.0, ease: "expo.out" }, DROP);
+      ["#b1", "#b2", "#b3", "#b4", "#b5"].forEach((b, i) => {
+        tl.fromTo(b, { scaleY: 0 }, { scaleY: 1, duration: 0.55, ease: "back.out(2.4)" }, DROP + i * 0.045);
+      });
+      tl.fromTo("#sig", { y: 136 }, { y: 0, duration: 0.62, ease: "back.out(2.6)", immediateRender: false }, DROP + 0.02);
+      Array.from(parts.children).forEach((p, i) => {
+        const ang = (i / PART_N) * Math.PI * 2 + hash(i) * 0.5;
+        const dist = 260 + 620 * hash(i + 40);
+        const x = Math.cos(ang) * dist * 1.25, y = Math.sin(ang) * dist * 0.8 - 80;
+        tl.fromTo(p, { x: 0, y: 0, scale: 0.3, rotation: 0, opacity: 1 }, { x, y, scale: 0.7 + 0.6 * hash(i + 3), rotation: (hash(i + 7) - 0.5) * 540, duration: 1.1, ease: "expo.out" }, DROP);
+        tl.to(p, { opacity: 0, duration: 0.5, ease: "power1.in" }, DROP + 0.5 + 0.4 * hash(i + 11));
+      });
+      rgbSplit("#lockup", DROP, 14);
+      tl.fromTo("#wordmark span", { yPercent: 105 }, { yPercent: 0, duration: 0.55, ease: "expo.out", stagger: 0.028 }, 3.564);
+      rgbSplit("#lockup", 3.62, 9);
+      tl.fromTo("#s2-head span", { opacity: 0, y: 60, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "power3.out", stagger: 0.07 }, 4.2);
+      tl.fromTo("#s2-uline", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out" }, 4.911);
+      shake(4.911, 6);
+
+      // the dive: the camera flies INTO the tallest logo bar
+      const DIVE = 5.625;
+      tl.to("#s2-head span", { y: -90, opacity: 0, filter: "blur(8px)", duration: 0.2, ease: "power3.in", stagger: 0.012 }, DIVE - 0.16);
+      tl.to("#lockup", { x: -5889, y: -9548, scale: 70, duration: 0.375, ease: "power3.in" }, DIVE);
+      tl.fromTo("#dive", { opacity: 0, scaleY: 1 }, { opacity: 1, duration: 0.08, ease: "none", immediateRender: false }, 5.93);
+      tl.set("#lockup", { x: -236, y: -176, scale: 0.16, opacity: 0 }, 6.01);
+      tl.to("#dive", { scaleY: 0.003, duration: 0.42, ease: "expo.inOut" }, 6.02);
+      tl.set("#dive", { opacity: 0 }, 6.46);
+      tl.to("#lockup", { opacity: 1, duration: 0.3, ease: "power2.out" }, 6.35);
+
+      // ════════ P2 · OBSERVE (6.0 – 9.0) ════════
+      const S3 = 6;
+      tl.set("#s3", { opacity: 1 }, S3 - 0.02);
+      shake(6.037, 8);
+      // camera: close-up on the CPU chart → pull back to reveal the workspace
+      tl.fromTo("#s3-cam", { scale: 2.4, x: -2275, y: -936 }, { scale: 2.25, x: -2080, y: -860, duration: 0.54, ease: "none" }, S3);
+      tl.to("#s3-cam", { scale: 1, x: 0, y: 0, duration: 0.9, ease: "expo.inOut" }, 6.56);
+      tl.fromTo("#s3-grid", { rotationY: -26, rotationX: 14, rotationZ: -3, z: -200 }, { rotationY: -12, rotationX: 6, rotationZ: 0, z: 0, duration: 3.1, ease: "power2.out" }, S3);
+      tl.fromTo("#s3-eb", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 7.05);
+      tl.fromTo("#s3-h1", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 7.1);
+      tl.fromTo("#s3-h2", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 7.3);
+      tl.fromTo("#s3-p", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, 7.7);
+      const G = [["#g-cpu", S3 - 0.02], ["#g-mem", 6.594], ["#g-conn", 6.66], ["#g-storage", 7.535], ["#g-uptime", 7.906], ["#g-warn", 8.44], ["#g-pill", 8.626]];
+      G.forEach(([sel, t0], i) => {
+        tl.fromTo(sel, { opacity: 0, z: 700, y: 60 + 20 * hash(i), rotationX: -24, filter: "blur(14px)" }, { opacity: 1, z: 0, y: 0, rotationX: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out" }, t0);
+      });
+      const store = { v: 0 };
+      tl.fromTo(store, { v: 0 }, { v: 428, duration: 0.9, ease: "power3.out", onUpdate: () => { $("g-storage-n").textContent = Math.round(store.v); } }, 7.6);
+      tl.fromTo("#g-storage-fill", { scaleX: 0 }, { scaleX: 1, duration: 0.9, ease: "power3.out" }, 7.6);
+      // drum fill → grid pulses
+      [8.44, 8.626, 8.824].forEach((t0) => tl.fromTo("#s3-stage", { scale: 1.025 }, { scale: 1, duration: 0.17, ease: "power2.out", immediateRender: false }, t0));
+      // exit: punch into the memory chart
+      tl.to("#s3-cam", { scale: 3, x: -1770, y: -1305, filter: "blur(10px)", duration: 0.26, ease: "power3.in" }, 8.84);
+      tl.to("#s3-copy", { x: -300, opacity: 0, duration: 0.24, ease: "power3.in" }, 8.84);
+      tl.set("#s3", { opacity: 0 }, 9.12);
+
+      // ════════ P3 · DRILL DOWN (9.0 – 12.0) ════════
+      tl.set("#s-chart", { opacity: 1 }, 8.95);
+      flash(9.0, 0.7);
+      shake(9.009, 8);
+      tl.fromTo("#chart-cam", { x: 622, y: 453, scale: 0.3, opacity: 0, filter: "blur(12px)" }, { x: 0, y: 0, scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 8.95);
+      tl.fromTo("#s-chart-eb", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 9.3);
+      const DRAW0 = 9.25, DIP_T = 10.879;
+      const drawDur = (DIP_T - DRAW0) / dipU;
+      const draw = { u: 0 };
+      const scrub = $("chart-scrub"), readV = $("chart-read-v"), readT = $("chart-read-t"), read = $("chart-read"), drawEl = $("chart-draw");
+      function paintDraw() {
+        const u = draw.u;
+        drawEl.style.clipPath = `inset(0 ${((1 - u) * 100).toFixed(3)}% 0 0)`;
+        scrub.style.transform = `translateX(${(u * CW).toFixed(1)}px)`;
+        readV.textContent = `${val(u).toFixed(1)} MB`;
+        readT.textContent = clockOf(u);
+        read.style.left = u > 0.72 ? "-236px" : "16px";
+      }
+      tl.fromTo(draw, { u: 0 }, { u: 1, duration: drawDur, ease: "none", onUpdate: paintDraw }, DRAW0);
+      paintDraw();
+      tl.fromTo("#chart-scrub", { opacity: 0 }, { opacity: 1, duration: 0.2 }, DRAW0);
+      tl.to("#chart-scrub", { opacity: 0, duration: 0.25 }, DRAW0 + drawDur);
+      tl.fromTo("#chart-dip i", { scale: 0 }, { scale: 1, duration: 0.4, ease: "back.out(3)" }, DIP_T);
+      tl.fromTo("#chart-dip u", { scale: 0.4, opacity: 1 }, { scale: 2.2, opacity: 0, duration: 0.6, ease: "power2.out", repeat: 1 }, DIP_T);
+      tl.fromTo("#chart-note", { opacity: 0, scale: 0.7, y: 20 }, { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "back.out(2)" }, 11.0);
+      shake(DIP_T, 5);
+      // punch-in through the dip
+      const DPX = 300 + DIP_X, DPY = 302 + DIP_Y;
+      tl.to("#chart-cam", { scale: 6, x: 960 - 6 * DPX, y: 540 - 6 * DPY, filter: "blur(6px)", duration: 0.38, ease: "power3.in" }, 11.633);
+      tl.set("#s-chart", { opacity: 0 }, 12.02);
+
+      // ════════ P4 · DIAGNOSE (12.0 – 15.0) ════════
+      flash(12.0, 0.8);
+      shake(12.005, 10);
+      tl.fromTo("#s4", { opacity: 0, scale: 1.3, filter: "blur(18px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.45, ease: "expo.out" }, 11.97);
+      const D = [["#d1", "#t1", "#ix1", 12.005], ["#d2", "#t2", "#ix2", 12.574], ["#d3", "#t3", "#ix3", 13.886], ["#d4", "#t4", "#ix4", 14.257]];
+      D.forEach(([card, word, ix, t0], k) => {
+        tl.fromTo(card, { opacity: 0, x: 560, rotationY: -42, rotationZ: 4, z: 120 }, { opacity: 1, x: 0, rotationY: -10, rotationZ: 0, z: 0, duration: 0.52, ease: "expo.out" }, t0);
+        for (let j = 0; j < k; j++) {
+          const depth = k - j;
+          tl.to(D[j][0], { x: -70 * depth, z: -150 * depth, rotationY: -10 - 3 * depth, opacity: Math.max(0, 1 - 0.28 * depth), duration: 0.5, ease: "expo.out" }, t0);
+        }
+        tl.fromTo(word, { opacity: 0, yPercent: 105 }, { opacity: 1, yPercent: 0, duration: 0.42, ease: "expo.out" }, t0 + 0.06);
+        if (k > 0) tl.to(D[k - 1][1], { opacity: 0, yPercent: -105, duration: 0.2, ease: "power3.in" }, t0 - 0.12);
+        tl.to(ix, { scaleX: 1, duration: 0.35, ease: "power2.out" }, t0);
+      });
+      tl.fromTo("#d1 .shot img", { y: 0 }, { y: -40, duration: 3, ease: "none" }, 12);
+      // exit: the deck scatters into depth
+      const SCATTER = [["#d1", -900, -520, -28], ["#d2", 1000, -600, 24], ["#d3", -800, 700, 18], ["#d4", 1100, 560, -22]];
+      SCATTER.forEach(([sel, x, y, r]) => tl.to(sel, { x, y, rotationZ: r, z: 300, opacity: 0, duration: 0.34, ease: "power3.in" }, 14.7));
+      tl.to("#s4-copy", { x: -260, opacity: 0, duration: 0.3, ease: "power3.in" }, 14.72);
+      tl.set("#s4", { opacity: 0 }, 15.05);
+
+      // ════════ P5 · ALERT (15.0 – 18.0) ════════
+      tl.set("#s-alert", { opacity: 1 }, 14.95);
+      shake(15.012, 10);
+      tl.fromTo("#al-win", { x: 420, opacity: 0, rotationY: -34, transformPerspective: 1800 }, { x: 0, opacity: 0.55, rotationY: -14, duration: 0.6, ease: "expo.out" }, 14.95);
+      tl.fromTo("#al-copy .eyebrow", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 15.0);
+      const al = { v: 0 };
+      tl.fromTo(al, { v: 0 }, { v: 93.7, duration: 0.56, ease: "power3.out", onUpdate: () => { $("al-n").textContent = al.v.toFixed(1); } }, 15.0);
+      tl.fromTo("#al-big", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 15.0);
+      rgbSplit("#al-big", 15.569, 10);
+      tl.fromTo("#al-pill", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.35, ease: "back.out(2)" }, 15.569);
+      tl.fromTo("#al-copy p", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" }, 15.9);
+      tl.fromTo("#al-bell", { scale: 0, rotation: -30 }, { scale: 1, rotation: 0, duration: 0.45, ease: "back.out(2.5)" }, 15.0);
+      [15.012, 15.569, 16.881, 17.252].forEach((t0) => {
+        [[16, 0.05], [-14, 0.05], [10, 0.05], [-6, 0.05], [0, 0.06]].forEach(([r, d], i) => tl.to("#al-bell", { rotation: r, duration: d, ease: "sine.inOut" }, t0 + 0.02 + i * 0.05));
+      });
+      const TOASTS = [["#to1", 15.05], ["#to2", 15.6], ["#to3", 16.9], ["#to4", 17.27]];
+      TOASTS.forEach(([sel, t0], k) => {
+        tl.fromTo(sel, { opacity: 0, x: 520, y: 0, rotation: 4 }, { opacity: 1, x: 0, y: 0, rotation: 0, duration: 0.45, ease: "expo.out" }, t0);
+        for (let j = 0; j < k; j++) tl.to(TOASTS[j][0], { y: (k - j) * 140, duration: 0.4, ease: "expo.out" }, t0);
+      });
+      // exit: everything recedes as the health page rises
+      tl.to("#s-alert", { opacity: 0, filter: "blur(10px)", scale: 0.94, duration: 0.3, ease: "power2.in" }, 17.72);
+      tl.to("#lockup", { opacity: 0, duration: 0.25 }, 17.72);
+
+      // ════════ P6 · LIGHT ↔ DARK (18.0 – 21.0) ════════
+      tl.set("#s-theme", { opacity: 1 }, 17.7);
+      tl.fromTo("#th-win", { y: 760, rotationX: 32, opacity: 0, transformPerspective: 2200 }, { y: 0, rotationX: 0, opacity: 1, duration: 0.42, ease: "expo.out" }, 17.72);
+      shake(18.007, 8);
+      const MOON = [1521, 173];
+      tl.set("#cursor", { x: 1260, y: 780 }, 18.0);
+      tl.fromTo("#cursor", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 18.05);
+      tl.to("#cursor", { x: MOON[0] - 6, y: MOON[1] - 4, duration: 0.42, ease: "power3.inOut" }, 18.12);
+      tl.to("#cursor", { scale: 0.8, duration: 0.07, ease: "power2.in" }, 18.5);
+      tl.to("#cursor", { scale: 1, duration: 0.2, ease: "back.out(3)" }, 18.57);
+      tl.fromTo("#cursor-ring", { x: MOON[0], y: MOON[1], scale: 0.3, opacity: 1 }, { x: MOON[0], y: MOON[1], scale: 2.4, opacity: 0, duration: 0.5, ease: "power2.out" }, 18.564);
+      tl.to("#cursor", { opacity: 0, duration: 0.2 }, 18.72);
+      const circ = (r) => `circle(${r}px at ${MOON[0]}px ${MOON[1]}px)`;
+      tl.fromTo("#th-dark", { clipPath: circ(0) }, { clipPath: circ(2300), duration: 0.72, ease: "power3.inOut" }, 18.564);
+      tl.fromTo("#th-bg", { scale: 1.16 }, { scale: 1, duration: 1.5, ease: "power2.out" }, 18.564);
+      tl.fromTo("#th-h1", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 19.0);
+      tl.fromTo("#th-h2", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 19.25);
+      tl.fromTo("#th-p", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 19.55);
+      shake(19.876, 7);
+      // the drum fill steps the circle back down to light
+      [[20.445, 1500], [20.631, 900], [20.817, 420], [21.0, 0]].forEach(([t0, r], i, arr) => {
+        const from = i ? arr[i - 1][1] : 2300;
+        tl.fromTo("#th-dark", { clipPath: circ(from) }, { clipPath: circ(r), duration: 0.14, ease: "power4.out", immediateRender: false }, t0);
+      });
+
+      // ════════ P7 · ASK (21.0 – 24.0) ════════
+      tl.set("#s5", { opacity: 1 }, 20.98);
+      tl.set("#s-theme", { opacity: 0 }, 21.02);
+      shake(21.002, 8);
+      tl.fromTo("#s5-win", { scale: 1, x: 0, y: 0 }, { scale: 1.7, x: -418.6, y: -282.3, duration: 0.55, ease: "expo.inOut" }, 21.2);
+      tl.fromTo("#s5-label", { opacity: 0, y: -50, rotation: 2 }, { opacity: 1, y: 0, rotation: 1, duration: 0.5, ease: "back.out(1.6)" }, 21.35);
+      const Q = "Why is disk usage at 93.7%?";
+      const typed = $("s5-typed");
+      const ty = { n: 0 };
+      tl.fromTo(ty, { n: 0 }, { n: Q.length, duration: 0.7, ease: "none", onUpdate: () => { typed.textContent = Q.slice(0, Math.round(ty.n)); } }, 21.78);
+      tl.fromTo("#s5-caret", { opacity: 1 }, { opacity: 0, duration: 0.1, repeat: 3, yoyo: true, ease: "steps(1)" }, 22.5);
+      tl.fromTo("#s5-send", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(3)" }, 22.4);
+      tl.to("#s5-send", { scale: 0.78, duration: 0.08, ease: "power2.in" }, 22.62);
+      tl.to("#s5-send", { scale: 1, duration: 0.4, ease: "elastic.out(1, 0.4)" }, 22.7);
+      tl.to("#s5-win", { scale: 1.45, x: -254.1, y: -416.8, duration: 0.6, ease: "expo.inOut" }, 22.7);
+      tl.fromTo("#s5-answer", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 22.75);
+      tl.fromTo("#s5-answer .who", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, 22.8);
+      tl.fromTo("#s5-tool", { opacity: 0, x: -12 }, { opacity: 1, x: 0, duration: 0.3, ease: "power3.out" }, 22.883);
+      [["#a1", 22.98], ["#a2", 23.255], ["#a3", 23.55]].forEach(([s, t0]) => {
+        tl.fromTo(s, { opacity: 0, y: 14, clipPath: "inset(0 100% 0 0)" }, { opacity: 1, y: 0, clipPath: "inset(0 0% 0 0)", duration: 0.34, ease: "power2.out" }, t0);
+      });
+      // exit: the whole app collapses into the hub core
+      tl.to("#s5", { scale: 0.08, opacity: 0, filter: "blur(8px)", transformOrigin: "50% 50%", duration: 0.3, ease: "power3.in" }, 23.75);
+
+      // ════════ P8 · DEPLOY (24.0 – 27.0) ════════
+      tl.set("#s-hub", { opacity: 1 }, 23.95);
+      flash(24.0, 0.6);
+      shake(24.009, 12);
+      tl.fromTo("#hub-cam", { scale: 1.4, rotation: -5 }, { scale: 1, rotation: 0, duration: 1.1, ease: "expo.out" }, 23.95);
+      tl.to("#hub-cam", { scale: 0.95, duration: 1.95, ease: "sine.inOut" }, 25.05);
+      tl.fromTo("#hub-core", { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.6, ease: "back.out(2)" }, 24.0);
+      tl.fromTo("#hub-core .hb", { scaleY: 0, transformOrigin: "50% 100%" }, { scaleY: 1, duration: 0.5, ease: "back.out(2.4)", stagger: 0.05 }, 24.1);
+      tl.fromTo("#hr1", { rotation: 0, scale: 0.4, opacity: 0 }, { rotation: 60, scale: 1, opacity: 1, duration: 3, ease: "power2.out" }, 24.0);
+      tl.fromTo("#hr2", { rotation: 0, scale: 0.4, opacity: 0 }, { rotation: -45, scale: 1, opacity: 1, duration: 3, ease: "power2.out" }, 24.05);
+      tl.fromTo("#hub-copy .eyebrow", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 24.1);
+      tl.fromTo("#hub-copy h3", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }, 24.25);
+      const NODE_T = [24.05, 24.12, 24.567, 24.63, 25.879, 25.94, 26.25, 26.31];
+      nodeEls.forEach((n, i) => {
+        const t0 = NODE_T[i];
+        const [l, len, x, y] = lineEls[i];
+        tl.fromTo(l, { attr: { "stroke-dashoffset": len } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.3, ease: "power2.out" }, t0 - 0.08);
+        tl.fromTo(n, { xPercent: -50, yPercent: -50, scale: 0, opacity: 0 }, { xPercent: -50, yPercent: -50, scale: 1, opacity: 1, duration: 0.5, ease: "back.out(2.2)" }, t0);
+        tl.fromTo(packetEls[i], { attr: { cx: HUB.cx, cy: HUB.cy }, opacity: 1 }, { attr: { cx: x, cy: y }, opacity: 1, duration: 0.55, ease: "power1.inOut", repeat: 1, repeatDelay: 0.25 }, t0 + 0.2);
+        tl.set(packetEls[i], { opacity: 0 }, t0 + 1.36);
+      });
+      tl.fromTo("#hub-term", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, 24.4);
+      const CMD = "docker run -d -p 3000:3000 ghcr.io/chmonitor/chmonitor";
+      const ht = { n: 0 };
+      tl.fromTo(ht, { n: 0 }, { n: CMD.length, duration: 1.1, ease: "none", onUpdate: () => { $("hub-typed").textContent = CMD.slice(0, Math.round(ht.n)); } }, 24.62);
+      const ok = { v: 0 };
+      tl.fromTo(ok, { v: 0 }, { v: 1, duration: 0.01, onUpdate: () => { $("hub-ok").textContent = ok.v > 0.5 ? "   ✓ ready on :3000" : ""; } }, 25.879);
+
+      // ════════ P9 · END (27.0 – 30.0) ════════
+      const S6 = 27;
+      wipeBars.forEach((bar, i) => {
+        const c = Math.abs(i - (WIPE_N - 1) / 2) / (WIPE_N / 2);
+        tl.fromTo(bar, { scaleY: 0, transformOrigin: "50% 100%" }, { scaleY: 1, duration: 0.34, ease: "power3.in" }, S6 - 0.4 + c * 0.1 + 0.05 * hash(i));
+        tl.to(bar, { scaleY: 0, transformOrigin: "50% 0%", duration: 0.5, ease: "expo.inOut" }, S6 + 0.02 + (1 - c) * 0.12 + 0.04 * hash(i + 3));
+      });
+      tl.set("#s-hub", { opacity: 0 }, S6);
+      tl.set(["#hud-url", "#hud-bpm"], { opacity: 0 }, S6);
+      tl.set("#s6", { opacity: 1 }, S6);
+      shake(27.005, 10);
+      tl.set("#lockup", { x: 170, y: 20, scale: 0.74, opacity: 1 }, S6);
+      tl.fromTo("#lockup", { x: 170, y: 20, scale: 0.74 }, { x: 150, y: 14, scale: 0.765, duration: 3, ease: "sine.out", immediateRender: false }, S6);
+      rgbSplit("#lockup", 27.1, 12);
+      tl.fromTo("#s6-head span", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.05 }, 27.3);
+      [["#ch1", 27.574], ["#ch2", 27.7], ["#ch3", 27.83], ["#ch4", 27.96]].forEach(([s, t0]) => {
+        tl.fromTo(s, { opacity: 0, scale: 0.6, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "back.out(2)" }, t0);
+      });
+      tl.fromTo("#s6-btn", { opacity: 0, y: 40, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "expo.out" }, 28.3);
+      tl.to("#s6-btn", { scale: 0.94, duration: 0.08, ease: "power2.in" }, 28.886);
+      tl.to("#s6-btn", { scale: 1, duration: 0.5, ease: "elastic.out(1, 0.45)" }, 28.966);
+      tl.to("#s6-chips", { y: -6, duration: 1.4, ease: "sine.inOut" }, 28.3);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
