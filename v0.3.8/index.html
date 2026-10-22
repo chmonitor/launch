@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Geist"; font-weight: 400 700; src: url("assets/fonts/geist-latin.woff2") format("woff2"); }
+      @font-face { font-family: "Geist Mono"; font-weight: 400; src: url("assets/fonts/geist-mono-latin-400.woff2") format("woff2"); }
+      @font-face { font-family: "Geist Mono"; font-weight: 500; src: url("assets/fonts/geist-mono-latin-500.woff2") format("woff2"); }
+      :root {
+        --wall: #f3f1ec; --card: #ffffff; --ink: #1c1b17; --muted: #57544c; --hair: #e4e1da;
+        --brand: #ea4a00; --brand-ink: #a33300; --bar: #f97316; --ok: #1f8a65; --warn: #b45309;
+        --shadow: 0 1px 0 rgba(28,27,23,.04), 0 24px 48px -18px rgba(28,27,23,.24), 0 60px 120px -40px rgba(28,27,23,.2);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--wall); }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--wall); font-family: "Geist", system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+      .mono { font-family: "Geist Mono", ui-monospace, monospace; }
+      .scene { position: absolute; inset: 0; opacity: 0; visibility: hidden; }
+      .cap { position: absolute; left: 140px; top: 170px; width: 620px; }
+      .label { font: 500 22px "Geist Mono", monospace; letter-spacing: .14em; color: var(--brand-ink); text-transform: uppercase; }
+      .title { margin-top: 22px; font-size: 76px; font-weight: 650; line-height: 1.02; letter-spacing: -.035em; }
+      .line { margin-top: 26px; font-size: 30px; line-height: 1.35; color: var(--muted); }
+      .chips { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 12px; }
+      .chip { font: 500 20px "Geist Mono", monospace; padding: 10px 16px; border-radius: 999px; background: var(--card); border: 1px solid var(--hair); }
+      .panel { position: absolute; left: 860px; top: 150px; width: 920px; background: var(--card); border-radius: 22px; box-shadow: var(--shadow); padding: 36px 40px; }
+      .ph { display: flex; justify-content: space-between; font: 500 20px "Geist Mono", monospace; color: var(--muted); padding-bottom: 20px; border-bottom: 1px solid var(--hair); }
+      .row { display: grid; grid-template-columns: 1fr 200px 170px; align-items: center; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--hair); font-size: 26px; }
+      .row:last-child { border-bottom: 0; }
+      .row .mono { font-size: 22px; }
+      .tag { font: 500 18px "Geist Mono", monospace; padding: 6px 12px; border-radius: 8px; background: #fff1e8; color: var(--brand-ink); justify-self: start; }
+      .tag.ok { background: #e8f5ef; color: #17694d; }
+      .barrow { display: grid; grid-template-columns: 360px 1fr 110px; gap: 18px; align-items: center; padding: 14px 0; font-size: 22px; }
+      .bar { height: 26px; border-radius: 6px; background: var(--bar); transform-origin: left center; }
+      .card3 { position: absolute; width: 520px; background: var(--card); border-radius: 20px; box-shadow: var(--shadow); padding: 30px 32px; }
+      .card3 b { display: block; font-size: 30px; letter-spacing: -.02em; margin: 14px 0 10px; }
+      .card3 span { font-size: 22px; color: var(--muted); line-height: 1.4; }
+      .tick { display: grid; grid-template-columns: 130px 1fr; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--hair); font-size: 24px; align-items: center; }
+      #fig { position: absolute; left: 760px; top: 120px; width: 1100px; }
+      .tray-l { position: absolute; font: 500 19px "Geist Mono", monospace; background: var(--card); border: 1px solid var(--hair); border-radius: 8px; padding: 6px 10px; }
+      #prog { position: absolute; left: 0; bottom: 0; height: 6px; width: 1920px; background: var(--brand); transform-origin: left; transform: scaleX(0); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="30" data-width="1920" data-height="1080">
+      <!-- 0–4 intro -->
+      <div class="scene" id="s0">
+        <div style="position:absolute;left:0;right:0;top:300px;text-align:center">
+          <img src="assets/brand/logo.svg" style="height:88px" alt="chmonitor" />
+          <div class="title" style="font-size:150px;margin-top:40px">v0.3.8</div>
+          <div class="line" style="font-size:36px">Find what nobody reads. Triage what broke off.</div>
+          <div class="chips" style="justify-content:center">
+            <span class="chip"><span class="n" data-to="34">0</span> features</span>
+            <span class="chip"><span class="n" data-to="96">0</span> fixes</span>
+            <span class="chip"><span class="n" data-to="6">0</span> perf</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4–8 advisor: unread -->
+      <div class="scene" id="s1">
+        <div class="cap">
+          <div class="label">01 · Advisor</div>
+          <div class="title">What nobody reads.</div>
+          <div class="line">Unread tables, unread columns and unused projections, measured over the query log window.</div>
+          <div class="chips"><span class="chip">Insight</span><span class="chip">Agent tool</span><span class="chip">Storage views</span></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><span>UNREAD OVER QUERY LOG WINDOW</span><span>7 days</span></div>
+          <div class="row r"><span class="mono">logs.events_archive</span><span class="mono">412 GiB</span><span class="tag">unread table</span></div>
+          <div class="row r"><span class="mono">web.sessions.raw_ua</span><span class="mono">88 GiB</span><span class="tag">unread column</span></div>
+          <div class="row r"><span class="mono">web.hits · p_by_day</span><span class="mono">31 GiB</span><span class="tag">unused projection</span></div>
+          <div class="row r"><span class="mono">web.hits</span><span class="mono">1.2 TiB</span><span class="tag ok">read 18k×</span></div>
+        </div>
+      </div>
+
+      <!-- 8–12 detached parts triage -->
+      <div class="scene" id="s2">
+        <div class="cap" style="width:560px">
+          <div class="label">02 · Detached parts</div>
+          <div class="title">Triage, not delete.</div>
+          <div class="line">Each part is checked against the active part of its partition on this replica, then sorted into a review class.</div>
+          <div class="chips"><span class="chip">Read-only</span><span class="chip">Same-replica coverage</span></div>
+        </div>
+        <img id="fig" src="assets/figures/triage-bench-light.svg" alt="" />
+        <div class="tray-l t" style="left:780px;top:350px">cannot_drop_via_sql</div>
+        <div class="tray-l t" style="left:900px;top:440px">needs_attention</div>
+        <div class="tray-l t" style="left:1000px;top:590px">review_after_coverage_check</div>
+        <div class="tray-l t" style="left:1380px;top:670px">review</div>
+      </div>
+
+      <!-- 12–16 hot query shapes -->
+      <div class="scene" id="s3">
+        <div class="cap">
+          <div class="label">03 · Storage</div>
+          <div class="title">Hot query shapes.</div>
+          <div class="line">For one table: which normalized queries hit it, how often, and what they cost.</div>
+          <div class="chips"><span class="chip">Per table</span><span class="chip">normalized_query_hash</span></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><span>web.hits · TOP SHAPES</span><span>reads</span></div>
+          <div class="barrow"><span class="mono">SELECT … WHERE site_id = ?</span><i class="bar" style="width:100%"></i><span class="mono">18.2k</span></div>
+          <div class="barrow"><span class="mono">SELECT count() … GROUP BY day</span><i class="bar" style="width:64%"></i><span class="mono">11.6k</span></div>
+          <div class="barrow"><span class="mono">SELECT uniq(user_id) …</span><i class="bar" style="width:38%"></i><span class="mono">6.9k</span></div>
+          <div class="barrow"><span class="mono">SELECT * … LIMIT ?</span><i class="bar" style="width:12%"></i><span class="mono">2.1k</span></div>
+        </div>
+      </div>
+
+      <!-- 16–20 insights -->
+      <div class="scene" id="s4">
+        <div class="cap" style="width:600px">
+          <div class="label">04 · Insights</div>
+          <div class="title">Waste, flagged.</div>
+          <div class="line">New checks for work that rewrites data without adding any.</div>
+        </div>
+        <div class="card3 c" style="left:860px;top:150px"><span class="tag">insight</span><b>Repeated OPTIMIZE</b><span>A table optimized again and again with no new data.</span></div>
+        <div class="card3 c" style="left:1300px;top:330px"><span class="tag">insight</span><b>Heavy TTL merges</b><span>TTL merges that rewrite far more than is ingested.</span></div>
+        <div class="card3 c" style="left:900px;top:560px"><span class="tag">insight</span><b>Retention forecast</b><span>For the table that dominates ingest.</span></div>
+        <div class="card3 c" style="left:1340px;top:720px"><span class="tag">advisor</span><b>Codec check</b><span>Savings judged from the measured ratio.</span></div>
+      </div>
+
+      <!-- 20–24 alert reminders -->
+      <div class="scene" id="s5">
+        <div class="cap">
+          <div class="label">05 · Alerts</div>
+          <div class="title">Reminders that know when to stop.</div>
+          <div class="line">Per-rule cooldown and mute, per-severity repeat, back-off while a value stays flat.</div>
+          <div class="chips"><span class="chip">Once until resolved</span><span class="chip">Digest reminders</span></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><span>disk_usage · warning</span><span>repeat reminders</span></div>
+          <div class="tick k"><span class="mono">09:00</span><span>Opened · 86.1%</span></div>
+          <div class="tick k"><span class="mono">10:00</span><span>Still open 1h · 86.3% <span class="tag">+0.2</span></span></div>
+          <div class="tick k"><span class="mono">10:00 → 12:00</span><span>Flat, backing off <span class="tag ok">skipped</span></span></div>
+          <div class="tick k"><span class="mono">14:00</span><span>Will fill within 24h <span class="tag">critical</span></span></div>
+        </div>
+      </div>
+
+      <!-- 24–28 montage -->
+      <div class="scene" id="s6">
+        <div style="position:absolute;left:140px;top:200px;width:1640px">
+          <div class="label">And more</div>
+          <div class="title" style="font-size:88px">34 features in one release.</div>
+          <div class="chips" style="gap:18px;margin-top:60px">
+            <span class="chip m">explain_clickhouse_symbol</span><span class="chip m">settings-audit skill</span>
+            <span class="chip m">dictionaries failing to load</span><span class="chip m">stuck Distributed queues</span>
+            <span class="chip m">near max_concurrent_queries</span><span class="chip m">Matrix hookshot</span>
+            <span class="chip m">deployment name in alerts</span><span class="chip m">collapsible sidebar subgroups</span>
+            <span class="chip m">PeerDB tools auto-enabled</span><span class="chip m">charts pause off-screen</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 28–30 end -->
+      <div class="scene" id="s7">
+        <div style="position:absolute;left:0;right:0;top:380px;text-align:center">
+          <img src="assets/brand/logo.svg" style="height:96px" alt="chmonitor" />
+          <div class="line mono" style="font-size:34px;margin-top:40px">docker pull ghcr.io/chmonitor/chmonitor:0.3.8</div>
+          <div class="label" style="margin-top:30px">chmonitor.dev</div>
+        </div>
+      </div>
+
+      <div id="prog"></div>
+      <audio id="bgm" src="assets/audio/bgm-v2.mp3" data-start="0" data-duration="30" data-track-index="6"></audio>
+    </div>
+    <script>
+      // Same music map as hero-film v2: groove from 4.0, drop at 12.0, final hit at 28.0.
+      const tl = gsap.timeline({ paused: true });
+      const W = [[0, 4], [4, 8], [8, 12], [12, 16], [16, 20], [20, 24], [24, 28], [28, 30]];
+      W.forEach(([a, b], i) => {
+        const s = "#s" + i;
+        tl.fromTo(s, { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.45, ease: "power3.out" }, a);
+        if (i < W.length - 1) tl.to(s, { autoAlpha: 0, y: -20, duration: 0.35, ease: "power2.in" }, b - 0.35);
+      });
+      document.querySelectorAll("#s0 .n").forEach((el) => {
+        const o = { v: 0 };
+        tl.to(o, { v: +el.dataset.to, duration: 1.6, ease: "power2.out", onUpdate: () => { el.textContent = Math.round(o.v); } }, 0.6);
+      });
+      tl.from("#s1 .r", { autoAlpha: 0, x: 40, stagger: 0.25, duration: 0.5, ease: "power3.out" }, 4.5);
+      tl.from("#fig", { autoAlpha: 0, scale: 0.94, duration: 0.8, ease: "power3.out" }, 8.2);
+      tl.from("#s2 .t", { autoAlpha: 0, y: 16, stagger: 0.4, duration: 0.4, ease: "power3.out" }, 9.0);
+      tl.from("#s3 .bar", { scaleX: 0, stagger: 0.2, duration: 0.8, ease: "power3.out" }, 12.4);
+      tl.from("#s4 .c", { autoAlpha: 0, y: 40, stagger: 0.35, duration: 0.5, ease: "power3.out" }, 16.4);
+      tl.from("#s5 .k", { autoAlpha: 0, x: 30, stagger: 0.45, duration: 0.45, ease: "power3.out" }, 20.4);
+      tl.from("#s6 .m", { autoAlpha: 0, y: 20, stagger: 0.12, duration: 0.4, ease: "power3.out" }, 24.6);
+      tl.fromTo("#prog", { scaleX: 0 }, { scaleX: 1, duration: 30, ease: "none" }, 0);
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
