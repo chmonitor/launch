@@ -127,7 +127,7 @@
       #sb-num small { font-size: 70px; letter-spacing: -0.02em; }
       #sb-lab { position: absolute; left: 660px; top: 356px; width: 600px; text-align: center; font-size: 19px; letter-spacing: 0.16em; color: var(--soft); }
       #sb-det { position: absolute; left: 660px; top: 600px; width: 600px; text-align: center; font-size: 22px; color: var(--muted); }
-      #shock { position: absolute; left: 960px; top: 540px; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; border: 2px solid rgba(234, 74, 0, 0.55); opacity: 0; }
+      #shock { position: absolute; left: -140px; top: -560px; width: 2200px; height: 2200px; border-radius: 50%; border: 2px solid rgba(234, 74, 0, 0.55); opacity: 0; }
 
       /* ── S4 · alerts ── */
       #s4-copy { left: 120px; top: 300px; }
@@ -704,7 +704,7 @@ mv_daily ...</pre></div>
 
       // ═══ S4 · ALERTS 12–14 (the drop) ═══════════════════════════
       tl.fromTo("#flash", { opacity: 0.85 }, { opacity: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, 12.0);
-      tl.fromTo("#shock", { width: 10, height: 10, marginLeft: -5, marginTop: -5, opacity: 1 }, { width: 2200, height: 2200, marginLeft: -1100, marginTop: -1100, opacity: 0, duration: 0.9, ease: "power3.out" }, 12.0);
+      tl.fromTo("#shock", { scale: 10 / 2200, opacity: 1 }, { scale: 1, opacity: 0, duration: 0.9, ease: "power3.out" }, 12.0);
       tl.to(["#sb-ring", "#sb-num", "#sb-lab", "#sb-det"], { scale: 1.6, opacity: 0, filter: "blur(14px)", duration: 0.45, ease: "power3.out" }, 12.0);
       off("#sb", 12.5);
       on("#s4", 12.0);
