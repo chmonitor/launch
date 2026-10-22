@@ -9,6 +9,7 @@ source needed to re-render or edit them.
 
 | Version | Folder | Highlights |
 |---------|--------|------------|
+| v0.3.8 | [`v0.3.8/`](v0.3.8/) | 30s HyperFrames film: advisor unread tables/columns/projections, detached parts triage, hot query shapes, insights, alert repeat reminders. |
 | Hero film | [`hero-film/`](hero-film/) | 30s light-canvas motion showreel for the chmonitor.dev hero, cut to the music: real 2× dash captures, 3D camera dives, drill-down chart, alerts, light/dark reveal, AI agent, deploy hub. Built with HyperFrames. |
 | v0.3.3 (remocn wrap) | [`v0.3.3-remocn/`](v0.3.3-remocn/) | Native 3680×2160 main film, remocn Soft Blur In `chmonitor.dev` / `v0.3` intro, GitHub Stars, Soft Blur In end card. Source video is stream-copied. |
 | v0.3 | [`v0.3/`](v0.3/) | Full rebuild launch film — TanStack Start dashboard, AI agent, query monitoring, data explorer, topology & health, self-host. |
@@ -19,3 +20,22 @@ source needed to re-render or edit them.
 - One folder per release (`v0.3/`, `v0.4/`, …).
 - The finished MP4 lives at the folder root; reproducible source under `src/`.
 - See each version's `README.md` for render instructions and notes.
+
+## Render prerequisites
+
+Every `*.mp3`, `*.png` and `*.mp4` is stored in Git LFS. Without `git lfs` the
+checkout holds 131-byte pointer files and a HyperFrames render fails with
+`Audio mix failed ... FFmpeg exited with code 1` (the pointer is not an mp3).
+
+```bash
+git lfs install --local && git lfs pull
+```
+
+HyperFrames needs `ffmpeg` and `ffprobe`. If they are not on `PATH`, point at them:
+
+```bash
+export HYPERFRAMES_FFMPEG_PATH=/path/to/ffmpeg HYPERFRAMES_FFPROBE_PATH=/path/to/ffprobe
+```
+
+The `hero-film` renders also need the private screenshots listed in
+`.gitignore` (copy them from `chmonitor/assets/screenshots`).
